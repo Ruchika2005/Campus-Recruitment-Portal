@@ -1,47 +1,59 @@
 import { useNavigate, Link } from "react-router-dom";
 import { GraduationCap, Award, TrendingUp, Users, Briefcase } from "lucide-react";
-import loginHero from "../assets/images/login-hero.jpg";
-
+import loginHero from "../../assets/images/login-hero.jpg";
 function Login() {
   const navigate = useNavigate();
 
   const handleLogin = async (e) => {
-    e.preventDefault();
+  e.preventDefault();
 
-    const email = e.target.email.value;
-    const password = e.target.password.value;
+  const email = e.target.email.value;
+  const password = e.target.password.value;
 
-    try {
-      const res = await fetch("http://localhost:5000/api/auth/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }),
-      });
+  try {
+    const res = await fetch("http://localhost:5000/api/auth/login", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email, password }),
+    });
 
-      const data = await res.json();
+    const data = await res.json();
 
-      if (!res.ok) {
-        alert(data.message || "Login failed");
-        return;
-      }
+console.log("LOGIN RESPONSE:", data);
 
-      const user = data.user;
+if (!res.ok) {
+  alert(data.message || "Login failed");
+  return;
+}
 
-      if (user.role === "admin") {
-        navigate("/admin");
-      } else {
-        navigate("/student", {
-          state: {
-            user_id: user.user_id,
-            name: user.name,
-            email: user.email,
-          },
-        });
-      }
-    } catch {
-      alert("Server not reachable");
-    }
-  };
+// ✅ ALWAYS extract user safely
+const user = data.user;
+
+if (!user) {
+  alert("User data not received");
+  return;
+}
+
+console.log("ROLE:", user.role);
+
+// ✅ STORE
+localStorage.setItem("user_id", user.user_id);
+localStorage.setItem("role", user.role);
+localStorage.setItem("name", user.name);
+
+// ✅ NAVIGATE (VERY IMPORTANT FIX BELOW)
+if (user.role === "admin") {
+  window.location.href = "/admin";
+} else {
+  window.location.href = "/student";
+}
+
+
+  } catch (err) {
+  console.log("FULL ERROR:", err);
+  alert("Server not reachable");
+}
+};
 
   return (
     <div className="min-h-screen flex bg-[#f6f7fb] relative overflow-hidden">

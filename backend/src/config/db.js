@@ -1,10 +1,12 @@
 const mysql = require("mysql2");
 require("dotenv").config();
 
-const db = mysql.createConnection({
-  uri: process.env.DATABASE_URL,
-  multipleStatements: true   // ✅ VERY IMPORTANT
-});
+// ✅ CORRECT WAY to use DATABASE_URL
+const db = mysql.createConnection(process.env.DATABASE_URL);
+
+// ✅ Enable multiple statements separately (important for your tables)
+db.config.namedPlaceholders = true;
+db.config.multipleStatements = true;
 
 db.connect((err) => {
   if (err) {

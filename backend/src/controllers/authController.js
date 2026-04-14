@@ -60,9 +60,21 @@ exports.completeProfile = (req, res) => {
         return res.status(500).json({ message: "Profile creation failed" });
       }
 
-      return res.json({
-        message: "Profile completed successfully"
-      });
+      // after insert success
+db.query(
+  "SELECT user_id, name, role FROM users WHERE user_id = ?",
+  [user_id],
+  (err, userResult) => {
+    if (err) {
+      return res.status(500).json({ message: "Error fetching user" });
+    }
+
+    return res.json({
+      message: "Profile completed successfully",
+      user: userResult[0]
+    });
+  }
+);
     }
   );
 };

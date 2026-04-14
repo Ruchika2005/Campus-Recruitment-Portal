@@ -7,7 +7,7 @@ export default function CompleteProfile() {
   const location = useLocation();
   const navigate = useNavigate();
 
-  const user_id = location.state?.user_id;
+  const user_id = localStorage.getItem("temp_user_id");
 
   if (!user_id) {
     return (
@@ -53,22 +53,35 @@ export default function CompleteProfile() {
   };
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
+  e.preventDefault();
 
-    try {
-      await axios.post(
-        "http://localhost:5000/api/auth/complete-profile",
-        {
-          user_id,
-          ...form,
-        }
-      );
+  try {
+    const res = await axios.post(
+      "http://localhost:5000/api/auth/complete-profile",
+      {
+        user_id,
+        ...form,
+      }
+    );
 
+    const user = res.data.user;
+
+    localStorage.setItem("user_id", user.user_id);
+    localStorage.setItem("role", user.role);
+    localStorage.setItem("name", user.name);
+
+    localStorage.removeItem("temp_user_id");
+
+    if (user.role === "admin") {
+      navigate("/admin");
+    } else {
       navigate("/student");
-    } catch (err) {
-      alert("Profile creation failed");
     }
-  };
+
+  } catch (err) {
+    alert("Profile creation failed");
+  }
+};
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-[#f6f7fb] p-6 relative overflow-hidden">

@@ -13,6 +13,17 @@ app.use(express.json());
 const authRoutes = require("./src/routes/authRoutes");
 app.use("/api/auth", authRoutes);
 
+const studentRoutes = require("./src/routes/studentRoutes");
+const opportunityRoutes = require("./src/routes/opportunityRoutes");
+const applicationRoutes = require("./src/routes/applicationRoutes");
+const tnpRoutes = require("./src/routes/tnpRoutes");
+
+
+app.use("/api/student", studentRoutes);
+app.use("/api/opportunities", opportunityRoutes);
+app.use("/api/applications", applicationRoutes);
+app.use("/api/tnp", tnpRoutes);
+
 // ================= TEST ROUTE =================
 app.get("/", (req, res) => {
   res.send("Server running");

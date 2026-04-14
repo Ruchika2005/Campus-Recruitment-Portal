@@ -1,6 +1,6 @@
 import { useNavigate, Link } from "react-router-dom";
 import { Rocket, Users, Briefcase, TrendingUp } from "lucide-react";
-import loginHero from "../assets/images/register-hero.jpg";
+import loginHero from "../../assets/images/register-hero.jpg";
 
 function Register() {
   const navigate = useNavigate();
@@ -25,9 +25,10 @@ function Register() {
       return;
     }
 
-    navigate("/complete-profile", {
-      state: { user_id: data.user_id },
-    });
+    // after successful register
+localStorage.setItem("temp_user_id", data.user_id);
+
+navigate("/complete-profile");
   };
 
   return (
