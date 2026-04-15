@@ -1,7 +1,8 @@
 const express = require("express");
 const router = express.Router();
-const { getAllOpportunities } = require("../controllers/opportunityController");
+const { getAllOpportunities, createOpportunity } = require("../controllers/opportunityController");
 
 router.get("/", getAllOpportunities);
+router.post("/", createOpportunity);
 
 module.exports = router;

@@ -1,22 +1,38 @@
 import { useEffect, useState } from "react";
-import { getStats } from "../../services/api";
+import { getStats, getOpportunities } from "../../services/api";
+import OpportunityCard from "../../components/dashboard/OpportunityCard";
 
 export default function StudentDashboard() {
   const [stats, setStats] = useState({});
+  const [jobs, setJobs] = useState([]);
 
   const user_id = localStorage.getItem("user_id");
 
   useEffect(() => {
     fetchStats();
+    fetchJobs();
   }, []);
 
   const fetchStats = async () => {
-    const res = await getStats(user_id);
-    setStats(res.data);
+    try {
+      const res = await getStats(user_id);
+      setStats(res.data);
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const fetchJobs = async () => {
+    try {
+      const res = await getOpportunities();
+      setJobs(res.data);
+    } catch (err) {
+      console.error(err);
+    }
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-8">
       {/* Heading */}
       <div>
         <h2 className="text-gray-800 text-xl font-semibold">
@@ -34,6 +50,22 @@ export default function StudentDashboard() {
         <Card title="Shortlisted" value={stats.shortlisted} />
         <Card title="Selected" value={stats.selected} />
       </div>
+
+      <hr className="border-gray-200" />
+
+      {/* Recent Opportunities Wrapper */}
+      <div>
+        <div className="flex items-center justify-between mb-6">
+           <h2 className="text-gray-800 text-xl font-semibold">Fresh Opportunities</h2>
+        </div>
+        
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          {jobs.slice(0, 6).map((job) => (
+             <OpportunityCard key={job.opportunity_id} job={job} />
+          ))}
+        </div>
+      </div>
+      
     </div>
   );
 }
