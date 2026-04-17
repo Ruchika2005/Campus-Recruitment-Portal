@@ -4,7 +4,7 @@ A full-stack web application that streamlines campus placements by connecting st
 
 ---
 
-## 🚨 Problem Statement
+## Problem Statement
 
 In many colleges, placement-related information is scattered across emails, WhatsApp groups, and notice boards. This leads to missed opportunities, lack of transparency, and inefficient manual tracking.
 
@@ -12,7 +12,7 @@ This project solves these issues by providing a centralized platform for managin
 
 ---
 
-## 🎯 Objectives
+## Objectives
 
 - Centralize recruitment data and opportunities  
 - Automate application and eligibility tracking  
@@ -20,7 +20,7 @@ This project solves these issues by providing a centralized platform for managin
 
 ---
 
-##  Table of Contents
+## Table of Contents
 
 - [Overview](#overview)
 - [Features](#features)
@@ -44,7 +44,7 @@ The Campus Recruitment Portal is a role-based platform with two types of users:
 
 ---
 
-##  Features
+## Features
 
 ### Student
 - Register & login with email/password
@@ -68,7 +68,7 @@ The Campus Recruitment Portal is a role-based platform with two types of users:
 
 ---
 
-##  Tech Stack
+## Tech Stack
 
 | Layer      | Technology                        |
 |------------|-----------------------------------|
@@ -84,7 +84,7 @@ The Campus Recruitment Portal is a role-based platform with two types of users:
 
 ---
 
-##  Project Structure
+## Project Structure
 
 ```
 Campus-Recruitment-Portal/
@@ -155,7 +155,7 @@ Campus-Recruitment-Portal/
 
 ---
 
-##  Database Schema
+## Database Schema
 
 The following tables are auto-created on server start:
 
@@ -172,7 +172,7 @@ The following tables are auto-created on server start:
 
 ---
 
-##  API Endpoints
+## API Endpoints
 
 ### Auth — `/api/auth`
 | Method | Endpoint             | Description              |
@@ -212,7 +212,7 @@ The following tables are auto-created on server start:
 
 ---
 
-##  Getting Started
+## Getting Started
 
 ### Prerequisites
 
@@ -258,7 +258,7 @@ The frontend runs on **http://localhost:5173**
 
 ---
 
-##  Environment Variables
+## Environment Variables
 
 Create a `.env` file inside the `backend/` directory:
 
@@ -270,7 +270,7 @@ DATABASE_URL=mysql://username:password@host:port/database_name
 
 ---
 
-##  Default Credentials
+## Default Credentials
 
 A default admin account is automatically created on first server start:
 
@@ -312,7 +312,7 @@ A default admin account is automatically created on first server start:
 
 ---
 
-##  Notes
+## Notes
 
 - Passwords are currently stored as **plain text**. For production use, implement hashing with `bcrypt`.
 - JWT-based authentication is stubbed but not yet enforced on all routes. The `authMiddleware.js` file can be extended for token validation.
