@@ -56,6 +56,7 @@ The Campus Recruitment Portal is a role-based platform with two types of users:
 - View announcements from the TNP office
 - View selection results
 - Change password via Settings
+- Receive email notifications for application status updates (Selected/Rejected/Shortlisted)
 
 ### TNP Admin
 - Secure admin login
@@ -65,6 +66,8 @@ The Campus Recruitment Portal is a role-based platform with two types of users:
 - Post announcements to all students
 - View complete student list with profiles
 - Change password via Settings
+- Send email notifications for new opportunities and announcements
+- Notify students about application status updates
 
 ---
 
