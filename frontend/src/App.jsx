@@ -103,6 +103,8 @@ import TNPDashboard from "./pages/tnp/Dashboard";
 import ManageApplications from "./pages/tnp/Applications";
 import AddOpportunity from "./pages/tnp/AddOpportunity";
 import Announcements2 from "./pages/tnp/Announcements";
+import StudentsList from "./pages/tnp/StudentsList";
+import Settings from "./pages/common/Settings";
 
 // ✅ PROTECTED ROUTE
 const ProtectedRoute = ({ children, role }) => {
@@ -142,6 +144,7 @@ function App() {
           <Route path="profile" element={<Profile />} />
           <Route path="announcements" element={<Announcements />} />
           <Route path="selected" element={<Selected />} />
+          <Route path="settings" element={<Settings />} />
         </Route>
 
         {/* ADMIN */}
@@ -157,6 +160,8 @@ function App() {
           <Route path="applications" element={<ManageApplications />} />
           <Route path="add-opportunity" element={<AddOpportunity />} />
           <Route path="announcements" element={<Announcements2 />} />
+          <Route path="students" element={<StudentsList />} />
+          <Route path="settings" element={<Settings />} />
         </Route>
 
       </Routes>

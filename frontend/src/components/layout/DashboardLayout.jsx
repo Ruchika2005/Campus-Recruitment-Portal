@@ -157,6 +157,7 @@ export function DashboardLayout() {
     { icon: FileText, label: "Manage Applications", path: "/admin/applications" },
     { icon: Briefcase, label: "Add Opportunity", path: "/admin/add-opportunity" },
     { icon: Megaphone, label: "Announcements", path: "/admin/announcements" },
+    { icon: Users, label: "All Students", path: "/admin/students" },
   ];
 
   // ✅ SWITCH MENU BASED ON ROLE
@@ -237,18 +238,20 @@ export function DashboardLayout() {
           </div>
 
           <div className="flex items-center gap-4">
-            <div className="relative">
-              <Search size={16} className="absolute left-3 top-3 text-gray-400" />
-              <input
-                className="pl-10 pr-4 py-2 bg-gray-100 rounded-xl"
-                placeholder="Search..."
-              />
-            </div>
-
-            <Bell className="text-gray-600" />
-
-            <div className="w-10 h-10 bg-indigo-500 rounded-xl flex items-center justify-center">
-              <User className="text-white" size={18} />
+            <div className="group relative">
+              <div className="w-10 h-10 bg-indigo-500 rounded-xl flex items-center justify-center cursor-pointer hover:bg-indigo-600 transition-colors">
+                <User className="text-white" size={18} />
+              </div>
+              
+              {/* Profile Dropdown */}
+              <div className="absolute right-0 mt-2 w-48 bg-white rounded-xl shadow-lg border border-gray-100 py-2 hidden group-hover:block animate-in fade-in slide-in-from-top-2 duration-200 z-50">
+                <button 
+                  onClick={() => navigate(role === 'admin' ? '/admin/settings' : '/student/settings')}
+                  className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-indigo-50 hover:text-indigo-600 transition-colors"
+                >
+                  Change Password
+                </button>
+              </div>
             </div>
           </div>
         </header>

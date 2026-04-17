@@ -47,25 +47,34 @@ export default function CompleteProfile() {
     skills: "",
     projects: "",
   });
+  const [file, setFile] = useState(null);
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
+  };
+
+  const handleFileChange = (e) => {
+    setFile(e.target.files[0]);
   };
 
   const handleSubmit = async (e) => {
   e.preventDefault();
 
   try {
+    const formData = new FormData();
+    formData.append("user_id", user_id);
+    Object.keys(form).forEach(key => formData.append(key, form[key]));
+    if (file) formData.append("resume", file);
+
     const res = await axios.post(
       "http://localhost:5000/api/auth/complete-profile",
-      {
-        user_id,
-        ...form,
-      }
+      formData,
+      { headers: { "Content-Type": "multipart/form-data" } }
     );
 
     const user = res.data.user;
 
+    localStorage.setItem("user", JSON.stringify(user));
     localStorage.setItem("user_id", user.user_id);
     localStorage.setItem("role", user.role);
     localStorage.setItem("name", user.name);
@@ -181,6 +190,16 @@ export default function CompleteProfile() {
             className="w-full p-3.5 rounded-xl bg-gray-50 border border-gray-200
             focus:outline-none focus:ring-2 focus:ring-indigo-300 focus:bg-white transition h-24"
           />
+
+          <div className="flex flex-col space-y-2">
+            <label className="text-gray-600 text-sm font-medium">Upload Resume (PDF)</label>
+            <input
+              type="file"
+              accept=".pdf,.doc,.docx"
+              onChange={handleFileChange}
+              className="w-full p-2.5 rounded-xl bg-gray-50 border border-gray-200 focus:outline-none"
+            />
+          </div>
 
           {/* BUTTON */}
           <button

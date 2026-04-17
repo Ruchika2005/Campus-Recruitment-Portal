@@ -37,6 +37,7 @@ if (!user) {
 console.log("ROLE:", user.role);
 
 // ✅ STORE
+localStorage.setItem("user", JSON.stringify(user));
 localStorage.setItem("user_id", user.user_id);
 localStorage.setItem("role", user.role);
 localStorage.setItem("name", user.name);

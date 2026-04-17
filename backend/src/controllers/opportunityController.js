@@ -1,4 +1,5 @@
 const db = require("../config/db");
+const { sendEmail, broadcastToStudents } = require("../utils/emailService");
 
 exports.getAllOpportunities = (req, res) => {
   const query = `
@@ -51,6 +52,19 @@ exports.createOpportunity = (req, res) => {
           if (err) {
             return db.rollback(() => res.status(500).json({ error: "Transaction commit failed", details: err }));
           }
+
+          // Notify all students about new opportunity
+          const emailSubject = `New Job Opportunity: ${title} at ${company_name}`;
+          const emailHtml = `
+            <h3>New Recruitment Drive!</h3>
+            <p><strong>Company:</strong> ${company_name}</p>
+            <p><strong>Role:</strong> ${title}</p>
+            <p><strong>Deadline:</strong> ${deadline}</p>
+            <hr/>
+            <p>Check the Campus Recruitment Portal for eligibility and to apply.</p>
+          `;
+          broadcastToStudents(emailSubject, emailHtml);
+
           res.status(201).json({ message: "Opportunity and eligibility created successfully!", opportunity_id: oppId });
         });
       });
@@ -92,11 +106,12 @@ exports.getStudentApplications = (req, res) => {
 
 exports.getAllApplications = (req, res) => {
   const query = `
-    SELECT a.*, u.name, s.branch, s.cgpa, o.title, o.company_name, o.type
+    SELECT a.*, u.name, s.branch, s.cgpa, o.title, o.company_name, o.type, d.file_url as resume
     FROM applications a
     JOIN students s ON a.roll_no = s.roll_no
     JOIN users u ON s.user_id = u.user_id
     JOIN opportunities o ON a.opportunity_id = o.opportunity_id
+    LEFT JOIN documents d ON s.roll_no = d.roll_no AND d.doc_type = 'resume'
     ORDER BY a.application_id DESC
   `;
   db.query(query, (err, result) => {
@@ -111,6 +126,47 @@ exports.updateApplicationStatus = (req, res) => {
   const query = "UPDATE applications SET status = ? WHERE application_id = ?";
   db.query(query, [status, id], (err, result) => {
     if (err) return res.status(500).json({ error: err.message });
+
+    // Fetch student email and opportunity details for notification
+    const detailQuery = `
+      SELECT u.email, u.name, o.company_name, o.title, o.type, a.roll_no
+      FROM applications a
+      JOIN students s ON a.roll_no = s.roll_no
+      JOIN users u ON s.user_id = u.user_id
+      JOIN opportunities o ON a.opportunity_id = o.opportunity_id
+      WHERE a.application_id = ?
+    `;
+    
+    db.query(detailQuery, [id], (detailErr, detailRes) => {
+      if (detailErr) {
+        console.error("❌ Error fetching student details for email:", detailErr);
+        return;
+      }
+      
+      if (detailRes.length > 0) {
+        const student = detailRes[0];
+        const emailSubject = `Application Update: ${student.company_name}`;
+        const emailHtml = `
+          <h3>Hello ${student.name},</h3>
+          <p>Your application for <strong>${student.title}</strong> at <strong>${student.company_name}</strong> has been updated.</p>
+          <p>New Status: <strong style="text-transform: uppercase; color: #4f46e5;">${status}</strong></p>
+          <hr/>
+          <p>Log in to the portal to see more details.</p>
+        `;
+        sendEmail(student.email, emailSubject, emailHtml);
+
+        // Auto-update student placement/internship flags if selected
+        if (status === 'selected') {
+          const flagColumn = student.type === 'placement' ? 'is_placed' : (student.type === 'internship' ? 'is_intern' : null);
+          if (flagColumn) {
+            db.query(`UPDATE students SET ${flagColumn} = 1 WHERE roll_no = ?`, [student.roll_no]);
+          }
+        }
+      } else {
+        console.log("ℹ️ No student found for notification (ID: %s)", id);
+      }
+    });
+
     res.json({ message: "Status updated successfully" });
   });
 };

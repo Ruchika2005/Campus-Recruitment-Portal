@@ -60,21 +60,36 @@ exports.completeProfile = (req, res) => {
         return res.status(500).json({ message: "Profile creation failed" });
       }
 
-      // after insert success
-db.query(
-  "SELECT user_id, name, role FROM users WHERE user_id = ?",
-  [user_id],
-  (err, userResult) => {
-    if (err) {
-      return res.status(500).json({ message: "Error fetching user" });
-    }
+      const finishProfile = () => {
+        db.query(
+          "SELECT user_id, name, role FROM users WHERE user_id = ?",
+          [user_id],
+          (err, userResult) => {
+            if (err) {
+              return res.status(500).json({ message: "Error fetching user" });
+            }
 
-    return res.json({
-      message: "Profile completed successfully",
-      user: userResult[0]
-    });
-  }
-);
+            return res.json({
+              message: "Profile completed successfully",
+              user: userResult[0]
+            });
+          }
+        );
+      };
+
+      const file = req.files && req.files.length > 0 ? req.files[0] : null;
+      if (file) {
+        const fileUrl = '/uploads/resumes/' + file.filename;
+        const docQuery = `INSERT INTO documents (roll_no, doc_type, file_url) VALUES (?, 'resume', ?)`;
+        db.query(docQuery, [roll_no, fileUrl], (docErr) => {
+          if (docErr) {
+            console.error("Error saving resume document:", docErr);
+          }
+          finishProfile();
+        });
+      } else {
+        finishProfile();
+      }
     }
   );
 };
@@ -111,4 +126,36 @@ exports.loginUser = (req, res) => {
       user
     });
   });
+};
+
+// ================= CHANGE PASSWORD =================
+exports.changePassword = (req, res) => {
+  const { user_id, currentPassword, newPassword } = req.body;
+
+  if (!user_id || !currentPassword || !newPassword) {
+    return res.status(400).json({ message: "All fields are required" });
+  }
+
+  // First verify current password
+  db.query(
+    "SELECT * FROM users WHERE user_id = ? AND password = ?",
+    [user_id, currentPassword],
+    (err, result) => {
+      if (err) return res.status(500).json({ message: "Server error" });
+      
+      if (result.length === 0) {
+        return res.status(401).json({ message: "Incorrect current password" });
+      }
+
+      // Update password
+      db.query(
+        "UPDATE users SET password = ? WHERE user_id = ?",
+        [newPassword, user_id],
+        (err) => {
+          if (err) return res.status(500).json({ message: "Failed to update password" });
+          res.json({ message: "Password updated successfully" });
+        }
+      );
+    }
+  );
 };

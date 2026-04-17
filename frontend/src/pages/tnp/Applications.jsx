@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { getAllAdminApplications, updateApplicationStatus } from "../../services/api";
-import { Download, Briefcase } from "lucide-react";
+import { Download, Briefcase, FileText } from "lucide-react";
 
 export default function ManageApplications() {
   const [apps, setApps] = useState([]);
@@ -29,15 +29,27 @@ export default function ManageApplications() {
   };
 
   const exportCSV = (group) => {
-    const headers = ["Application ID", "Roll No", "Name", "Branch", "CGPA", "Company", "Job Title", "Status"];
+    const headers = ["Application ID", "Roll No", "Name", "Branch", "CGPA", "Company", "Job Title", "Status", "Resume Link"];
     
     const rows = group.applicants.map(a => [
-      a.application_id, a.roll_no, a.name, a.branch, a.cgpa, a.company_name, a.title, a.status
+      a.application_id, 
+      a.roll_no, 
+      a.name, 
+      a.branch, 
+      a.cgpa, 
+      a.company_name, 
+      a.title, 
+      a.status,
+      a.resume ? `http://${window.location.hostname}:5000${a.resume}` : "No Resume"
     ]);
     
     const csvContent = [
       headers.join(","),
-      ...rows.map(r => r.map(cell => `"${cell || ''}"`).join(","))
+      ...rows.map(r => r.map((cell, idx) => {
+        // Don't wrap the last column (Resume URL) in quotes to help Excel/Sheets auto-link it
+        if (idx === headers.length - 1 && cell.startsWith("http")) return cell;
+        return `"${cell || ''}"`;
+      }).join(","))
     ].join("\n");
     
     const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
@@ -132,6 +144,19 @@ export default function ManageApplications() {
                         <span className="font-medium text-gray-700">{app.branch}</span>
                         <br/>
                         <span className="text-xs text-gray-400 font-medium">CGPA: {app.cgpa}</span>
+                        {app.resume && (
+                          <div className="mt-2">
+                            <a 
+                              href={`http://${window.location.hostname}:5000${app.resume}`} 
+                              target="_blank" 
+                              rel="noopener noreferrer"
+                              className="inline-flex items-center gap-1 px-2 py-1 bg-indigo-50 text-indigo-600 hover:bg-indigo-100 rounded text-[10px] font-bold transition border border-indigo-100 shadow-sm"
+                            >
+                              <FileText size={12} />
+                              View Resume
+                            </a>
+                          </div>
+                        )}
                       </td>
                       <td className="py-4 px-6">
                         <span className={`px-3 py-1 rounded-full text-xs font-semibold capitalize
