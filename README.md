@@ -289,9 +289,6 @@ A default admin account is automatically created on first server start:
 ### Login Page
 <img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/83d950c9-d2b1-482a-96a7-a75033a44813" />
 
-### Register Page
-<img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/18ded207-05e3-447b-be0f-6e273c19a780" />
-
 ### Student Dashboard
 <img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/adc06b2e-111d-4fbe-a9f1-977337807edb" />
 
@@ -310,9 +307,8 @@ A default admin account is automatically created on first server start:
 ### Student List (Admin)
 <img width="1893" height="708" alt="image" src="https://github.com/user-attachments/assets/be32ff61-2e74-4ea3-9e86-518ee007d1b1" />
 
-### Announcements
+### Announcements (Admin)
 <img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/601c5d10-3e15-4f1c-8069-2dcda7bf01d5" />
-
 
 ---
 
