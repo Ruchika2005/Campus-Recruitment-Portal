@@ -1,6 +1,22 @@
-#  Campus Recruitment Portal
+# Campus Recruitment Portal
 
 A full-stack web application that streamlines campus placements by connecting students with opportunities managed by the Training & Placement (TNP) office.
+
+---
+
+## 🚨 Problem Statement
+
+In many colleges, placement-related information is scattered across emails, WhatsApp groups, and notice boards. This leads to missed opportunities, lack of transparency, and inefficient manual tracking.
+
+This project solves these issues by providing a centralized platform for managing the entire recruitment process.
+
+---
+
+## 🎯 Objectives
+
+- Centralize recruitment data and opportunities  
+- Automate application and eligibility tracking  
+- Improve transparency for students and TNP  
 
 ---
 
@@ -242,7 +258,7 @@ The frontend runs on **http://localhost:5173**
 
 ---
 
-## ⚙️ Environment Variables
+##  Environment Variables
 
 Create a `.env` file inside the `backend/` directory:
 
@@ -268,26 +284,35 @@ A default admin account is automatically created on first server start:
 
 ---
 
-##  Frontend Routes
+## Screenshots
 
-| Path                     | Access   | Description                    |
-|--------------------------|----------|--------------------------------|
-| `/`                      | Public   | Login page                     |
-| `/register`              | Public   | Student registration           |
-| `/complete-profile`      | Public   | Academic profile setup         |
-| `/student`               | Student  | Student dashboard              |
-| `/student/opportunities` | Student  | Browse opportunities           |
-| `/student/applications`  | Student  | My applications                |
-| `/student/profile`       | Student  | View/edit profile              |
-| `/student/announcements` | Student  | TNP announcements              |
-| `/student/selected`      | Student  | Selection results              |
-| `/student/settings`      | Student  | Account settings               |
-| `/admin`                 | Admin    | TNP dashboard                  |
-| `/admin/applications`    | Admin    | Manage all applications        |
-| `/admin/add-opportunity` | Admin    | Post new opportunity           |
-| `/admin/announcements`   | Admin    | Post announcements             |
-| `/admin/students`        | Admin    | View all students              |
-| `/admin/settings`        | Admin    | Account settings               |
+### Login Page
+<img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/83d950c9-d2b1-482a-96a7-a75033a44813" />
+
+### Register Page
+<img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/18ded207-05e3-447b-be0f-6e273c19a780" />
+
+### Student Dashboard
+<img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/adc06b2e-111d-4fbe-a9f1-977337807edb" />
+
+### Opportunities page
+<img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/448505ea-189f-437c-a1e8-d5dc82c8db98" />
+
+### Applications Page
+<img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/4f82f986-a94b-40cc-9105-8de885845d9a" />
+
+### Admin Panel
+<img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/a0c0456b-a3ef-41f8-8c95-13aaa8213dd2" />
+
+### Add Opportunity (Admin)
+<img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/04b47153-19a1-41dc-99e5-652320cc5c93" />
+
+### Student List (Admin)
+<img width="1893" height="708" alt="image" src="https://github.com/user-attachments/assets/be32ff61-2e74-4ea3-9e86-518ee007d1b1" />
+
+### Announcements
+<img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/601c5d10-3e15-4f1c-8069-2dcda7bf01d5" />
+
 
 ---
 
