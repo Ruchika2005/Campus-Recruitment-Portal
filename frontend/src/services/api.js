@@ -10,4 +10,5 @@ export const addOpportunity = (data) => API.post("/opportunities", data);
 export const applyOpportunity = (data) => API.post("/opportunities/apply", data);
 export const getStudentApplications = (roll_no) => API.get(`/opportunities/applications/student/${roll_no}`);
 export const getAllAdminApplications = () => API.get("/opportunities/applications");
+export const updateApplicationStatus = (id, status) => API.put(`/opportunities/applications/${id}`, { status });
 export default API;

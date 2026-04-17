@@ -50,13 +50,17 @@ exports.getAnnouncements = (req, res) => {
 // GET SELECTED STUDENTS
 exports.getSelected = (req, res) => {
   const query = `
-    SELECT s.*, o.company_name
-    FROM selections s
-    JOIN opportunities o ON s.opportunity_id = o.opportunity_id
+    SELECT a.*, u.name, s.branch, s.cgpa, o.title, o.company_name, o.type
+    FROM applications a
+    JOIN students s ON a.roll_no = s.roll_no
+    JOIN users u ON s.user_id = u.user_id
+    JOIN opportunities o ON a.opportunity_id = o.opportunity_id
+    WHERE a.status = 'selected'
+    ORDER BY o.deadline DESC, a.application_id DESC
   `;
 
   db.query(query, (err, result) => {
-    if (err) return res.status(500).json(err);
+    if (err) return res.status(500).json({ error: err.message });
     res.json(result);
   });
 };

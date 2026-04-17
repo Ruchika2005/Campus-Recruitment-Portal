@@ -61,3 +61,25 @@ exports.getTopCompanies = (req, res) => {
     res.json(result);
   });
 };
+
+// CREATE ANNOUNCEMENT
+exports.createAnnouncement = (req, res) => {
+  const { title, message } = req.body;
+  if (!title || !message) return res.status(400).json({ error: "Title and message are required" });
+
+  const query = "INSERT INTO announcements (title, message) VALUES (?, ?)";
+  db.query(query, [title, message], (err, result) => {
+    if (err) return res.status(500).json({ error: err.message });
+    res.status(201).json({ message: "Announcement created", id: result.insertId });
+  });
+};
+
+// DELETE ANNOUNCEMENT
+exports.deleteAnnouncement = (req, res) => {
+  const { id } = req.params;
+  const query = "DELETE FROM announcements WHERE announcement_id = ?";
+  db.query(query, [id], (err, result) => {
+    if (err) return res.status(500).json({ error: err.message });
+    res.json({ message: "Announcement deleted" });
+  });
+};

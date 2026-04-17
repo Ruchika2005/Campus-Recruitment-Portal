@@ -8,10 +8,8 @@ const {
 } = require("../controllers/studentController");
 
 router.get("/stats/:user_id", getDashboardStats);
-
-module.exports = router;
-
-
 router.get("/profile/:user_id", getProfile);
 router.get("/announcements", getAnnouncements);
 router.get("/selected", getSelected);
+
+module.exports = router;

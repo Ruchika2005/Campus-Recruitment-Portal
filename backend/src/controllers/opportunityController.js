@@ -92,9 +92,10 @@ exports.getStudentApplications = (req, res) => {
 
 exports.getAllApplications = (req, res) => {
   const query = `
-    SELECT a.*, s.name, s.branch, s.cgpa, o.title, o.company_name
+    SELECT a.*, u.name, s.branch, s.cgpa, o.title, o.company_name, o.type
     FROM applications a
     JOIN students s ON a.roll_no = s.roll_no
+    JOIN users u ON s.user_id = u.user_id
     JOIN opportunities o ON a.opportunity_id = o.opportunity_id
     ORDER BY a.application_id DESC
   `;
