@@ -1,133 +1,103 @@
 import { useNavigate, Link } from "react-router-dom";
-import { GraduationCap, Award, TrendingUp, Users, Briefcase } from "lucide-react";
-import loginHero from "../../assets/images/login-hero.jpg";
+import collegeLogo from "../../assets/images/college-logo.png";
+import collegePic1 from "../../assets/images/pic1.jpg";
+
 function Login() {
   const navigate = useNavigate();
 
   const handleLogin = async (e) => {
-  e.preventDefault();
+    e.preventDefault();
 
-  const email = e.target.email.value;
-  const password = e.target.password.value;
+    const email = e.target.email.value;
+    const password = e.target.password.value;
 
-  try {
-    const res = await fetch("http://localhost:5000/api/auth/login", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email, password }),
-    });
+    try {
+      const res = await fetch("http://localhost:5000/api/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password }),
+      });
 
-    const data = await res.json();
+      const data = await res.json();
 
-console.log("LOGIN RESPONSE:", data);
+      console.log("LOGIN RESPONSE:", data);
 
-if (!res.ok) {
-  alert(data.message || "Login failed");
-  return;
-}
+      if (!res.ok) {
+        alert(data.message || "Login failed");
+        return;
+      }
 
-// ✅ ALWAYS extract user safely
-const user = data.user;
+      // ✅ ALWAYS extract user safely
+      const user = data.user;
 
-if (!user) {
-  alert("User data not received");
-  return;
-}
+      if (!user) {
+        alert("User data not received");
+        return;
+      }
 
-console.log("ROLE:", user.role);
+      console.log("ROLE:", user.role);
 
-// ✅ STORE
-localStorage.setItem("user", JSON.stringify(user));
-localStorage.setItem("user_id", user.user_id);
-localStorage.setItem("role", user.role);
-localStorage.setItem("name", user.name);
+      // ✅ STORE
+      localStorage.setItem("user", JSON.stringify(user));
+      localStorage.setItem("user_id", user.user_id);
+      localStorage.setItem("role", user.role);
+      localStorage.setItem("name", user.name);
 
-// ✅ NAVIGATE (VERY IMPORTANT FIX BELOW)
-if (user.role === "admin") {
-  window.location.href = "/admin";
-} else {
-  window.location.href = "/student";
-}
+      // ✅ NAVIGATE (VERY IMPORTANT FIX BELOW)
+      if (user.role === "admin") {
+        window.location.href = "/admin";
+      } else {
+        window.location.href = "/student";
+      }
 
-
-  } catch (err) {
-  console.log("FULL ERROR:", err);
-  alert("Server not reachable");
-}
-};
+    } catch (err) {
+      console.log("FULL ERROR:", err);
+      alert("Server not reachable");
+    }
+  };
 
   return (
-    <div className="min-h-screen flex bg-[#f6f7fb] relative overflow-hidden">
+    <div className="min-h-screen flex bg-white relative overflow-hidden">
 
-      {/* Background soft blobs */}
-      <div className="absolute top-[-120px] left-[-120px] w-[300px] h-[300px] bg-indigo-200 rounded-full blur-3xl opacity-20" />
-      <div className="absolute bottom-[-120px] right-[-120px] w-[350px] h-[350px] bg-blue-200 rounded-full blur-3xl opacity-20" />
+      {/* LEFT PANEL - Professional Full Image Overlay */}
+      <div className="hidden lg:flex lg:w-1/2 relative flex-col justify-between p-12 text-white overflow-hidden shadow-2xl z-10">
+        
+        {/* Background Image with Sleek Gradient Overlay */}
+        <div className="absolute inset-0 z-0">
+          <img 
+            src={collegePic1} 
+            alt="Campus Building" 
+            className="w-full h-full object-cover"
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-slate-900 via-slate-900/80 to-slate-900/40 mix-blend-multiply" />
+          <div className="absolute inset-0 bg-indigo-900/20" />
+        </div>
 
-      {/* LEFT PANEL */}
-      <div className="hidden lg:flex lg:w-1/2 relative overflow-hidden h-screen items-center justify-center bg-[#eaf0ff]">
 
-        <div className="absolute inset-0 bg-black/5" />
 
-        <div className="relative z-10 flex flex-col items-center justify-center text-center px-10 py-6 h-full">
-
-          {/* Logo */}
-          <div className="mb-4">
-            <div className="w-16 h-16 flex items-center justify-center bg-white/30 backdrop-blur rounded-2xl shadow-md">
-              <GraduationCap size={30} className="text-gray-700" />
-            </div>
-          </div>
-
-          {/* IMAGE */}
-          <div className="relative mb-5">
-            <div className="w-56 h-56 rounded-3xl overflow-hidden shadow-xl border border-white/30">
-              <img
-                src={loginHero}
-                alt="Students celebrating success"
-                className="w-full h-full object-cover"
-              />
-            </div>
-
-            {/* Award badge */}
-            <div className="absolute -top-3 -right-3 w-12 h-12 bg-amber-400 rounded-full flex items-center justify-center shadow-md animate-bounce">
-              <Award size={20} className="text-amber-900" />
-            </div>
-          </div>
-
-          {/* TEXT */}
-          <h2 className="text-lg font-semibold text-gray-800 mb-2">
-            Start Your Career Journey
-          </h2>
-
-          <p className="text-gray-600 text-sm max-w-xs mb-6">
-            Connect with top companies and unlock amazing opportunities
+        {/* Bottom: Clean Typography & Stats */}
+        <div className="relative z-10 max-w-lg mb-8">
+          <span className="inline-block py-1 px-3 rounded-full bg-white/10 border border-white/20 text-xs font-semibold tracking-wider text-indigo-100 mb-6 backdrop-blur-md">
+            EMPOWERING CAREERS
+          </span>
+          <h1 className="text-4xl lg:text-5xl font-bold mb-6 leading-tight text-white">
+            Launch Your Future <br />With Top Companies.
+          </h1>
+          <p className="text-slate-300 mb-10 text-lg leading-relaxed max-w-md">
+            Join the official campus recruitment platform to track your applications, discover new opportunities, and connect directly with industry leaders.
           </p>
-
-          {/* STATS */}
-          <div className="grid grid-cols-3 gap-4 w-full max-w-sm">
-
-            <div className="text-center">
-              <div className="w-10 h-10 bg-white/30 rounded-lg flex items-center justify-center mx-auto mb-1">
-                <Users size={18} className="text-gray-700" />
-              </div>
-              <p className="text-xs text-gray-600">500+ Students</p>
+          
+          {/* Minimalist Stats */}
+          <div className="flex gap-10 border-t border-white/20 pt-8">
+            <div>
+              <p className="text-4xl font-black text-white mb-1 tracking-tight">500<span className="text-indigo-400">+</span></p>
+              <p className="text-sm font-medium text-slate-400 uppercase tracking-wider">Students Placed</p>
             </div>
-
-            <div className="text-center">
-              <div className="w-10 h-10 bg-white/30 rounded-lg flex items-center justify-center mx-auto mb-1">
-                <Briefcase size={18} className="text-gray-700" />
-              </div>
-              <p className="text-xs text-gray-600">100+ Companies</p>
+            <div>
+              <p className="text-4xl font-black text-white mb-1 tracking-tight">100<span className="text-indigo-400">+</span></p>
+              <p className="text-sm font-medium text-slate-400 uppercase tracking-wider">Recruiters</p>
             </div>
-
-            <div className="text-center">
-              <div className="w-10 h-10 bg-white/30 rounded-lg flex items-center justify-center mx-auto mb-1">
-                <TrendingUp size={18} className="text-gray-700" />
-              </div>
-              <p className="text-xs text-gray-600">85% Placed</p>
-            </div>
-
           </div>
-
         </div>
       </div>
 
@@ -142,12 +112,19 @@ if (user.role === "admin") {
             <div className="absolute top-0 left-0 right-0 h-1 bg-indigo-500 rounded-t-3xl" />
 
             {/* HEADER */}
-            <div className="text-center mb-8">
+            <div className="text-center mb-10">
+              <div className="flex justify-center mb-6">
+                <img 
+                  src={collegeLogo} 
+                  alt="Cummins College Logo" 
+                  className="h-16 sm:h-20 w-auto object-contain" 
+                />
+              </div>
               <h2 className="text-2xl font-semibold text-gray-800">
                 Welcome Back
               </h2>
               <p className="text-gray-500 text-sm mt-2">
-                Login to your account
+                Login to your official placement account
               </p>
             </div>
 

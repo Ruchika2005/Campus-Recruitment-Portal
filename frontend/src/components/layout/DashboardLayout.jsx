@@ -237,23 +237,6 @@ export function DashboardLayout() {
             </p>
           </div>
 
-          <div className="flex items-center gap-4">
-            <div className="group relative">
-              <div className="w-10 h-10 bg-indigo-500 rounded-xl flex items-center justify-center cursor-pointer hover:bg-indigo-600 transition-colors">
-                <User className="text-white" size={18} />
-              </div>
-              
-              {/* Profile Dropdown */}
-              <div className="absolute right-0 mt-2 w-48 bg-white rounded-xl shadow-lg border border-gray-100 py-2 hidden group-hover:block animate-in fade-in slide-in-from-top-2 duration-200 z-50">
-                <button 
-                  onClick={() => navigate(role === 'admin' ? '/admin/settings' : '/student/settings')}
-                  className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-indigo-50 hover:text-indigo-600 transition-colors"
-                >
-                  Change Password
-                </button>
-              </div>
-            </div>
-          </div>
         </header>
 
         {/* Page content */}
