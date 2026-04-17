@@ -20,6 +20,11 @@ export default function AddOpportunity() {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
+  const handleMultiSelect = (e) => {
+    const value = Array.from(e.target.selectedOptions, option => option.value).join(", ");
+    setForm({ ...form, [e.target.name]: value });
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
@@ -95,12 +100,26 @@ export default function AddOpportunity() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">Eligible Branch</label>
-              <input name="branch" value={form.branch} onChange={handleChange} className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:outline-none" placeholder="e.g. CSE, IT, All" />
+              <select multiple name="branch" value={form.branch ? form.branch.split(', ').map(s=>s.trim()) : []} onChange={handleMultiSelect} className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:outline-none h-32">
+                <option value="Comp">Comp</option>
+                <option value="IT">IT</option>
+                <option value="EnTc">EnTc</option>
+                <option value="Mech">Mech</option>
+                <option value="Instru">Instru</option>
+              </select>
+              <p className="text-xs text-gray-500 mt-1">Hold Ctrl/Cmd to select multiple</p>
             </div>
             
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">Year of Passing</label>
-              <input name="year" type="number" value={form.year} onChange={handleChange} className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:outline-none" placeholder="e.g. 2025" />
+              <select multiple name="year" value={form.year ? form.year.split(', ').map(s=>s.trim()) : []} onChange={handleMultiSelect} className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:outline-none h-32">
+                <option value="2029">2029</option>
+                <option value="2028">2028</option>
+                <option value="2027">2027</option>
+                <option value="2026">2026</option>
+                <option value="2025">2025</option>
+              </select>
+              <p className="text-xs text-gray-500 mt-1">Hold Ctrl/Cmd to select multiple</p>
             </div>
 
             <div>

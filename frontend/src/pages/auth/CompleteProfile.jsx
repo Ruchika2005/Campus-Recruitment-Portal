@@ -121,23 +121,38 @@ export default function CompleteProfile() {
               required
             />
 
-            <input
+            <select
               name="branch"
-              placeholder="Branch (e.g. Computer Engineering)"
+              value={form.branch}
               onChange={handleChange}
               className="w-full p-3.5 rounded-xl bg-gray-50 border border-gray-200
               focus:outline-none focus:ring-2 focus:ring-indigo-300 focus:bg-white transition"
               required
-            />
+            >
+              <option value="" disabled>Select Branch</option>
+              <option value="Comp">Comp</option>
+              <option value="IT">IT</option>
+              <option value="EnTc">EnTc</option>
+              <option value="Mech">Mech</option>
+              <option value="Instru">Instru</option>
+            </select>
 
-            <input
+            <select
               name="year"
-              placeholder="Year (e.g. 3)"
+              value={form.year}
               onChange={handleChange}
               className="w-full p-3.5 rounded-xl bg-gray-50 border border-gray-200
               focus:outline-none focus:ring-2 focus:ring-indigo-300 focus:bg-white transition"
               required
-            />
+            >
+              <option value="" disabled>Select Year</option>
+              <option value="2029">2029</option>
+              <option value="2028">2028</option>
+              <option value="2027">2027</option>
+              <option value="2026">2026</option>
+              <option value="2025">2025</option>
+              <option value="2024">2024</option>
+            </select>
 
             <input
               name="cgpa"
