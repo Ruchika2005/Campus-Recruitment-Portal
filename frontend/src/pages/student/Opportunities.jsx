@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { getOpportunities, applyOpportunity, getStudentApplications } from "../../services/api";
-import { Briefcase, Calendar, MapPin } from "lucide-react";
+import { Briefcase, Calendar, MapPin, GraduationCap, Users, Star } from "lucide-react";
 import axios from "axios";
 
 export default function OpportunitiesPage() {
@@ -48,8 +48,18 @@ export default function OpportunitiesPage() {
       setAppliedJobs(new Set([...appliedJobs, job.opportunity_id]));
       alert("Applied Successfully!");
     } catch(err) {
-      alert("Failed to apply");
+      const msg = err?.response?.data?.error || "Failed to apply. Please try again.";
+      alert(msg);
     }
+  };
+
+  const isDeadlinePassed = (dateString) => {
+    if (!dateString) return false;
+    const now = new Date();
+    now.setHours(0, 0, 0, 0);
+    const deadline = new Date(dateString);
+    deadline.setHours(0, 0, 0, 0);
+    return now > deadline;
   };
 
   const isEligible = (job) => {
@@ -101,6 +111,7 @@ export default function OpportunitiesPage() {
           items.map((job) => {
             const hasApplied = appliedJobs.has(job.opportunity_id);
             const eligible = isEligible(job);
+            const deadlinePassed = isDeadlinePassed(job.deadline);
 
             return (
               <div
@@ -118,28 +129,70 @@ export default function OpportunitiesPage() {
                   </span>
                 </div>
 
-                <p className="text-sm text-gray-600 mb-5 break-words line-clamp-2">
+                <p className="text-sm text-gray-600 mb-4 break-words line-clamp-2">
                   {job.description}
                 </p>
 
-                <div className="space-y-3 text-sm text-gray-600 mb-6">
+                {/* Eligibility Criteria */}
+                <div className="mb-4 p-3 bg-gray-50 rounded-lg border border-gray-100">
+                  <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-2">Eligibility</p>
+                  {!job.branches && !job.years && !job.min_cgpa ? (
+                    <p className="text-xs text-green-600 font-medium">✓ Open to all students</p>
+                  ) : (
+                    <div className="space-y-2">
+                      {job.branches && (
+                        <div className="flex items-start gap-2">
+                          <Users size={13} className="text-gray-400 mt-0.5 shrink-0" />
+                          <div className="flex flex-wrap gap-1">
+                            {job.branches.split(',').map(b => b.trim()).map((b, i) => (
+                              <span key={i} className="text-xs bg-indigo-50 text-indigo-700 px-2 py-0.5 rounded-full font-medium uppercase">{b}</span>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+                      {job.years && (
+                        <div className="flex items-start gap-2">
+                          <GraduationCap size={13} className="text-gray-400 mt-0.5 shrink-0" />
+                          <div className="flex flex-wrap gap-1">
+                            {job.years.split(',').map(y => y.trim()).map((y, i) => (
+                              <span key={i} className="text-xs bg-blue-50 text-blue-700 px-2 py-0.5 rounded-full font-medium">Year {y}</span>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+                      {job.min_cgpa && parseFloat(job.min_cgpa) > 0 && (
+                        <div className="flex items-center gap-2">
+                          <Star size={13} className="text-gray-400 shrink-0" />
+                          <span className="text-xs text-gray-600">Min. CGPA: <strong className="text-gray-800">{parseFloat(job.min_cgpa).toFixed(1)}</strong></span>
+                        </div>
+                      )}
+                    </div>
+                  )}
+                </div>
+
+                <div className="space-y-2 text-sm text-gray-600 mb-5">
                   <div className="flex gap-2 items-center">
-                    <MapPin size={16} className="text-gray-400" />
+                    <MapPin size={15} className="text-gray-400" />
                     {job.location || "India"}
                   </div>
                   <div className="flex gap-2 items-center">
-                    <Briefcase size={16} className="text-gray-400" />
+                    <Briefcase size={15} className="text-gray-400" />
                     <span className="capitalize">{job.type}</span>
                   </div>
-                  <div className="flex gap-2 items-center text-indigo-600 font-medium">
-                    <Calendar size={16} />
+                  <div className={`flex gap-2 items-center font-medium ${deadlinePassed ? 'text-red-500' : 'text-indigo-600'}`}>
+                    <Calendar size={15} />
                     Deadline: {formatDate(job.deadline)}
+                    {deadlinePassed && <span className="text-xs font-semibold bg-red-100 text-red-600 px-2 py-0.5 rounded-full ml-1">Closed</span>}
                   </div>
                 </div>
 
                 {hasApplied ? (
                   <button disabled className="w-full bg-green-500 text-white py-2.5 rounded-lg font-medium cursor-not-allowed">
                     Applied ✓
+                  </button>
+                ) : deadlinePassed ? (
+                  <button disabled className="w-full bg-red-100 text-red-500 py-2.5 rounded-lg font-medium cursor-not-allowed">
+                    Deadline Passed
                   </button>
                 ) : eligible ? (
                   <button onClick={() => handleApply(job)} className="w-full bg-indigo-600 text-white py-2.5 rounded-lg hover:bg-indigo-700 transition font-medium">

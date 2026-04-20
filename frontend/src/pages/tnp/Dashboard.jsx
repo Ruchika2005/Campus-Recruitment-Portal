@@ -89,11 +89,11 @@ export default function TNPDashboard() {
 
   const statCards = [
     {
-      title: "Active Students",
-      value: (stats.total_2026 || 0) + (stats.total_2027 || 0),
+      title: "Total Students",
+      value: stats.total_students || 0,
       icon: Users,
       color: "from-blue-500 to-indigo-600",
-      description: "Batches 2026 & 2027"
+      description: "All batches"
     },
     {
       title: "Opportunities",
@@ -136,7 +136,6 @@ export default function TNPDashboard() {
       <div className="flex justify-between items-end">
         <div>
           <h1 className="text-3xl font-bold text-gray-800 tracking-tight">Admin Dashboard</h1>
-          <p className="text-gray-500 mt-1 font-medium">Real-time batch statistics (Excluding 1st/2nd years)</p>
         </div>
         <div className="text-sm font-bold text-indigo-600 bg-white px-4 py-2 rounded-2xl flex items-center gap-2 border border-gray-100 shadow-sm">
           <Calendar size={16} />
@@ -153,7 +152,6 @@ export default function TNPDashboard() {
               <div className={`p-4 rounded-2xl bg-gradient-to-br ${stat.color} text-white shadow-lg shadow-indigo-100`}>
                 <stat.icon size={28} />
               </div>
-              <ArrowUpRight className="text-gray-300 group-hover:text-indigo-500 transition-colors" size={24} />
             </div>
             
             <div className="space-y-1">

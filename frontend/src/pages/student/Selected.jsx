@@ -37,7 +37,7 @@ export default function Selected() {
     return acc;
   }, {});
 
-  const groupedAppsList = Object.values(groupedApps);
+  const groupedAppsList = Object.values(groupedApps).sort((a, b) => b.opportunity_id - a.opportunity_id);
 
   return (
     <div className="bg-white p-8 rounded-2xl shadow-sm border border-gray-100 min-h-screen">

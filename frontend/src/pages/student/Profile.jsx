@@ -5,7 +5,7 @@ import { FileText, Save, Edit2, Upload, Trash2, RefreshCw, X } from "lucide-reac
 export default function Profile() {
   const [data, setData] = useState(null);
   const [isEditing, setIsEditing] = useState(false);
-  const [editForm, setEditForm] = useState({ cgpa: "", year: "" });
+  const [editForm, setEditForm] = useState({ cgpa: "", year: "", skills: "", projects: "" });
   const [file, setFile] = useState(null);
   const [isUploading, setIsUploading] = useState(false);
   const user_id = localStorage.getItem("user_id");
@@ -18,7 +18,12 @@ export default function Profile() {
   const fetchProfile = async () => {
     const res = await axios.get(`http://localhost:5000/api/student/profile/${user_id}`);
     setData(res.data);
-    setEditForm({ cgpa: res.data.cgpa, year: res.data.year });
+    setEditForm({ 
+      cgpa: res.data.cgpa, 
+      year: res.data.year,
+      skills: res.data.skills || "",
+      projects: res.data.projects || ""
+    });
   };
 
   const handleEditChange = (e) => {
@@ -92,7 +97,7 @@ export default function Profile() {
           </button>
         ) : (
           <div className="flex space-x-2">
-            <button onClick={() => { setIsEditing(false); setEditForm({ cgpa: data.cgpa, year: data.year }); }} className="flex items-center text-gray-600 hover:text-gray-800 bg-gray-100 px-4 py-2 rounded-lg transition">
+            <button onClick={() => { setIsEditing(false); setEditForm({ cgpa: data.cgpa, year: data.year, skills: data.skills, projects: data.projects }); }} className="flex items-center text-gray-600 hover:text-gray-800 bg-gray-100 px-4 py-2 rounded-lg transition">
               <X size={16} className="mr-1" /> Cancel
             </button>
             <button onClick={saveProfile} className="flex items-center text-white bg-indigo-600 hover:bg-indigo-700 px-4 py-2 rounded-lg transition shadow-md">
@@ -154,11 +159,33 @@ export default function Profile() {
         <div className="space-y-4">
           <div>
             <label className="text-sm text-gray-500 font-semibold uppercase tracking-wider">Skills</label>
-            <p className="text-gray-800 bg-gray-50 p-3 rounded-lg border">{data.skills || "No skills added."}</p>
+            {isEditing ? (
+              <textarea 
+                name="skills" 
+                value={editForm.skills} 
+                onChange={handleEditChange} 
+                rows="3"
+                className="mt-1 block w-full p-3 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 bg-gray-50"
+                placeholder="e.g. React, Node.js, Python..."
+              />
+            ) : (
+              <p className="text-gray-800 bg-gray-50 p-3 rounded-lg border">{data.skills || "No skills added."}</p>
+            )}
           </div>
           <div>
             <label className="text-sm text-gray-500 font-semibold uppercase tracking-wider">Projects</label>
-            <p className="text-gray-800 bg-gray-50 p-3 rounded-lg border whitespace-pre-wrap">{data.projects || "No projects added."}</p>
+            {isEditing ? (
+              <textarea 
+                name="projects" 
+                value={editForm.projects} 
+                onChange={handleEditChange} 
+                rows="5"
+                className="mt-1 block w-full p-3 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 bg-gray-50 whitespace-pre-wrap"
+                placeholder="Describe your major projects..."
+              />
+            ) : (
+              <p className="text-gray-800 bg-gray-50 p-3 rounded-lg border whitespace-pre-wrap">{data.projects || "No projects added."}</p>
+            )}
           </div>
         </div>
       </div>

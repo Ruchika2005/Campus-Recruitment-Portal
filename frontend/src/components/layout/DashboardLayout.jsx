@@ -156,6 +156,7 @@ export function DashboardLayout() {
     { icon: LayoutDashboard, label: "Dashboard", path: "/admin" },
     { icon: FileText, label: "Manage Applications", path: "/admin/applications" },
     { icon: Briefcase, label: "Add Opportunity", path: "/admin/add-opportunity" },
+    { icon: Search, label: "All Opportunities", path: "/admin/opportunities" },
     { icon: Megaphone, label: "Announcements", path: "/admin/announcements" },
     { icon: Users, label: "All Students", path: "/admin/students" },
   ];

@@ -104,6 +104,7 @@ import ManageApplications from "./pages/tnp/Applications";
 import AddOpportunity from "./pages/tnp/AddOpportunity";
 import Announcements2 from "./pages/tnp/Announcements";
 import StudentsList from "./pages/tnp/StudentsList";
+import ManageOpportunities from "./pages/tnp/ManageOpportunities";
 import Settings from "./pages/common/Settings";
 
 // ✅ PROTECTED ROUTE
@@ -159,6 +160,7 @@ function App() {
           <Route index element={<TNPDashboard />} />
           <Route path="applications" element={<ManageApplications />} />
           <Route path="add-opportunity" element={<AddOpportunity />} />
+          <Route path="opportunities" element={<ManageOpportunities />} />
           <Route path="announcements" element={<Announcements2 />} />
           <Route path="students" element={<StudentsList />} />
           <Route path="settings" element={<Settings />} />

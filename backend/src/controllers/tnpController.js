@@ -5,6 +5,7 @@ const { broadcastToStudents } = require("../utils/emailService");
 exports.getTNPStats = (req, res) => {
   const query = `
     SELECT
+      (SELECT COUNT(*) FROM students) AS total_students,
       (SELECT COUNT(*) FROM students WHERE year = '2026') AS total_2026,
       (SELECT COUNT(*) FROM students WHERE year = '2027') AS total_2027,
       (SELECT COUNT(*) FROM opportunities) AS total_opportunities,

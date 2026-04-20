@@ -8,6 +8,7 @@ export default function AddOpportunity() {
     type: "internship",
     description: "",
     deadline: "",
+    location: "",
     branch: "",
     year: "",
     min_cgpa: "",
@@ -38,6 +39,7 @@ export default function AddOpportunity() {
         type: "internship",
         description: "",
         deadline: "",
+        location: "",
         branch: "",
         year: "",
         min_cgpa: "",
@@ -86,6 +88,11 @@ export default function AddOpportunity() {
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">Deadline</label>
               <input required type="date" name="deadline" value={form.deadline} onChange={handleChange} className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:outline-none" />
+            </div>
+
+            <div className="md:col-span-2">
+              <label className="block text-sm font-medium text-gray-700 mb-2">Location</label>
+              <input name="location" value={form.location} onChange={handleChange} className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:outline-none" placeholder="e.g. Mumbai, Bangalore, Remote" />
             </div>
           </div>
 

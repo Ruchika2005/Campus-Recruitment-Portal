@@ -41,15 +41,15 @@ exports.getProfile = (req, res) => {
 // UPDATE PROFILE
 exports.updateProfile = (req, res) => {
   const user_id = req.params.user_id;
-  const { cgpa, year } = req.body;
+  const { cgpa, year, skills, projects } = req.body;
 
   const query = `
     UPDATE students 
-    SET cgpa = ?, year = ?
+    SET cgpa = ?, year = ?, skills = ?, projects = ?
     WHERE user_id = ?
   `;
 
-  db.query(query, [cgpa, year, user_id], (err, result) => {
+  db.query(query, [cgpa, year, skills, projects, user_id], (err, result) => {
     if (err) return res.status(500).json(err);
     res.json({ message: "Profile updated successfully" });
   });
@@ -150,7 +150,7 @@ exports.getSelected = (req, res) => {
     JOIN users u ON s.user_id = u.user_id
     JOIN opportunities o ON a.opportunity_id = o.opportunity_id
     WHERE a.status = 'selected'
-    ORDER BY o.deadline DESC, a.application_id DESC
+    ORDER BY a.application_id DESC
   `;
 
   db.query(query, (err, result) => {

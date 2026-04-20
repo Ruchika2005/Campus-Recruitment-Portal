@@ -10,7 +10,7 @@ exports.getAllOpportunities = (req, res) => {
     FROM opportunities o
     LEFT JOIN opportunity_eligibility e ON o.opportunity_id = e.opportunity_id
     GROUP BY o.opportunity_id
-    ORDER BY o.deadline ASC
+    ORDER BY o.opportunity_id DESC
   `;
   db.query(query, (err, result) => {
     if (err) return res.status(500).json(err);
@@ -19,13 +19,13 @@ exports.getAllOpportunities = (req, res) => {
 };
 
 exports.createOpportunity = (req, res) => {
-  const { title, company_name, type, description, deadline, branch, year, min_cgpa } = req.body;
+  const { title, company_name, type, description, deadline, location, branch, year, min_cgpa } = req.body;
 
   db.beginTransaction((err) => {
     if (err) return res.status(500).json({ error: "Transaction start failed", details: err });
 
-    const oppQuery = `INSERT INTO opportunities (title, company_name, type, description, deadline) VALUES (?, ?, ?, ?, ?)`;
-    db.query(oppQuery, [title, company_name, type, description, deadline], (err, oppResult) => {
+    const oppQuery = `INSERT INTO opportunities (title, company_name, type, description, deadline, location) VALUES (?, ?, ?, ?, ?, ?)`;
+    db.query(oppQuery, [title, company_name, type, description, deadline, location || null], (err, oppResult) => {
       if (err) {
         return db.rollback(() => res.status(500).json({ error: "Failed to create opportunity", details: err }));
       }
@@ -76,15 +76,33 @@ exports.applyForOpportunity = (req, res) => {
   const { user_id, opportunity_id, roll_no } = req.body;
   if (!roll_no || !opportunity_id) return res.status(400).json({ error: "Missing parameters" });
 
-  const checkQuery = "SELECT * FROM applications WHERE roll_no = ? AND opportunity_id = ?";
-  db.query(checkQuery, [roll_no, opportunity_id], (err, results) => {
+  // Check deadline before allowing application
+  const deadlineQuery = "SELECT deadline FROM opportunities WHERE opportunity_id = ?";
+  db.query(deadlineQuery, [opportunity_id], (err, oppResults) => {
     if (err) return res.status(500).json({ error: err.message });
-    if (results.length > 0) return res.status(400).json({ error: "Already applied" });
+    if (oppResults.length === 0) return res.status(404).json({ error: "Opportunity not found" });
 
-    const insertQuery = "INSERT INTO applications (roll_no, opportunity_id, status) VALUES (?, ?, 'applied')";
-    db.query(insertQuery, [roll_no, opportunity_id], (err, insertResult) => {
+    const deadline = oppResults[0].deadline;
+    if (deadline) {
+      const now = new Date();
+      now.setHours(0, 0, 0, 0); // compare by date only
+      const deadlineDate = new Date(deadline);
+      deadlineDate.setHours(0, 0, 0, 0);
+      if (now > deadlineDate) {
+        return res.status(403).json({ error: "Application deadline has passed. You can no longer apply for this opportunity." });
+      }
+    }
+
+    const checkQuery = "SELECT * FROM applications WHERE roll_no = ? AND opportunity_id = ?";
+    db.query(checkQuery, [roll_no, opportunity_id], (err, results) => {
       if (err) return res.status(500).json({ error: err.message });
-      res.status(201).json({ message: "Applied successfully" });
+      if (results.length > 0) return res.status(400).json({ error: "Already applied" });
+
+      const insertQuery = "INSERT INTO applications (roll_no, opportunity_id, status) VALUES (?, ?, 'applied')";
+      db.query(insertQuery, [roll_no, opportunity_id], (err, insertResult) => {
+        if (err) return res.status(500).json({ error: err.message });
+        res.status(201).json({ message: "Applied successfully" });
+      });
     });
   });
 };
