@@ -271,21 +271,6 @@ DATABASE_URL=mysql://username:password@host:port/database_name
 
 > The project uses [Railway](https://railway.app/) for hosted MySQL. You can also use a local MySQL instance by setting the connection string accordingly.
 
----
-
-## Default Credentials
-
-A default admin account is automatically created on first server start:
-
-| Field    | Value               |
-|----------|---------------------|
-| Email    | `admin@college.com` |
-| Password | `admin123`          |
-| Role     | TNP Admin           |
-
->  **Change this password immediately after first login in a production environment.**
-
----
 
 ## Screenshots
 
