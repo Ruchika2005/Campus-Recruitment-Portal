@@ -30,7 +30,6 @@ This project solves these issues by providing a centralized platform for managin
 - [API Endpoints](#api-endpoints)
 - [Getting Started](#getting-started)
 - [Environment Variables](#environment-variables)
-- [Default Credentials](#default-credentials)
 - [Screenshots](#screenshots)
 
 ---
