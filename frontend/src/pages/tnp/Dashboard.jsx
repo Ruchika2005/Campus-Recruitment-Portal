@@ -62,6 +62,17 @@ import {
   Calendar,
   GraduationCap
 } from "lucide-react";
+import { 
+  BarChart, 
+  Bar, 
+  XAxis, 
+  YAxis, 
+  CartesianGrid, 
+  Tooltip, 
+  Legend, 
+  ResponsiveContainer,
+  Cell
+} from 'recharts';
 
 export default function TNPDashboard() {
   const [stats, setStats] = useState({
@@ -169,6 +180,141 @@ export default function TNPDashboard() {
             </div>
           </div>
         ))}
+      </div>
+
+      {/* Charts Section */}
+      <div className="grid grid-cols-1 xl:grid-cols-2 gap-8">
+        {/* Internship Chart - 2027 */}
+        <div className="bg-white p-6 rounded-[2.5rem] shadow-sm border border-gray-100">
+          <div className="flex items-center gap-3 mb-6 px-2">
+            <div className="p-2 bg-indigo-50 text-indigo-600 rounded-xl">
+              <Activity size={20} />
+            </div>
+            <div>
+              <h3 className="text-xl font-bold text-gray-800">Internship Statistics</h3>
+              <p className="text-xs text-gray-400 font-bold uppercase tracking-wider">Batch 2027 • Branch-wise</p>
+            </div>
+          </div>
+          
+          <div className="h-[350px] w-full">
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart data={stats.batch_2027_stats || []} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
+                <XAxis 
+                  dataKey="branch" 
+                  axisLine={false} 
+                  tickLine={false} 
+                  tick={{ fill: '#94a3b8', fontSize: 12, fontWeight: 700 }}
+                  dy={10}
+                />
+                <YAxis 
+                  axisLine={false} 
+                  tickLine={false} 
+                  tick={{ fill: '#94a3b8', fontSize: 12, fontWeight: 700 }}
+                />
+                <Tooltip 
+                  cursor={{ fill: '#f8fafc' }}
+                  content={({ active, payload, label }) => {
+                    if (active && payload && payload.length) {
+                      const total = payload.find(p => p.dataKey === 'total')?.value || 0;
+                      const count = payload.find(p => p.dataKey === 'interned')?.value || 0;
+                      const percentage = total > 0 ? ((count / total) * 100).toFixed(1) : 0;
+                      return (
+                        <div className="bg-white p-4 rounded-2xl shadow-xl border border-gray-100 min-w-[160px]">
+                          <p className="text-xs font-black text-gray-400 uppercase tracking-widest mb-2 border-b pb-2">{label}</p>
+                          <div className="space-y-1.5">
+                            <div className="flex justify-between items-center text-xs">
+                              <span className="text-gray-500 font-bold">Students:</span>
+                              <span className="font-black text-gray-800">{total}</span>
+                            </div>
+                            <div className="flex justify-between items-center text-xs">
+                              <span className="text-indigo-500 font-bold">Interns:</span>
+                              <span className="font-black text-indigo-800">{count}</span>
+                            </div>
+                            <div className="mt-2 pt-2 border-t border-indigo-50 flex justify-between items-center">
+                              <span className="text-[10px] font-black text-indigo-400 uppercase tracking-tighter">Rate:</span>
+                              <span className="text-sm font-black text-indigo-600">{percentage}%</span>
+                            </div>
+                          </div>
+                        </div>
+                      );
+                    }
+                    return null;
+                  }}
+                />
+                <Legend iconType="circle" wrapperStyle={{ paddingTop: '20px', fontWeight: 700, fontSize: '12px', textTransform: 'uppercase', letterSpacing: '0.05em' }} />
+                <Bar name="Total Students" dataKey="total" fill="#e2e8f0" radius={[10, 10, 0, 0]} barSize={20} />
+                <Bar name="Got Internship" dataKey="interned" fill="#6366f1" radius={[10, 10, 0, 0]} barSize={20} />
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+        </div>
+
+        {/* Placement Chart - 2026 */}
+        <div className="bg-white p-6 rounded-[2.5rem] shadow-sm border border-gray-100">
+          <div className="flex items-center gap-3 mb-6 px-2">
+            <div className="p-2 bg-emerald-50 text-emerald-600 rounded-xl">
+              <TrendingUp size={20} />
+            </div>
+            <div>
+              <h3 className="text-xl font-bold text-gray-800">Placement Statistics</h3>
+              <p className="text-xs text-gray-400 font-bold uppercase tracking-wider">Batch 2026 • Branch-wise</p>
+            </div>
+          </div>
+          
+          <div className="h-[350px] w-full">
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart data={stats.batch_2026_stats || []} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
+                <XAxis 
+                  dataKey="branch" 
+                  axisLine={false} 
+                  tickLine={false} 
+                  tick={{ fill: '#94a3b8', fontSize: 12, fontWeight: 700 }}
+                  dy={10}
+                />
+                <YAxis 
+                  axisLine={false} 
+                  tickLine={false} 
+                  tick={{ fill: '#94a3b8', fontSize: 12, fontWeight: 700 }}
+                />
+                <Tooltip 
+                  cursor={{ fill: '#f8fafc' }}
+                  content={({ active, payload, label }) => {
+                    if (active && payload && payload.length) {
+                      const total = payload.find(p => p.dataKey === 'total')?.value || 0;
+                      const count = payload.find(p => p.dataKey === 'placed')?.value || 0;
+                      const percentage = total > 0 ? ((count / total) * 100).toFixed(1) : 0;
+                      return (
+                        <div className="bg-white p-4 rounded-2xl shadow-xl border border-gray-100 min-w-[160px]">
+                          <p className="text-xs font-black text-gray-400 uppercase tracking-widest mb-2 border-b pb-2">{label}</p>
+                          <div className="space-y-1.5">
+                            <div className="flex justify-between items-center text-xs">
+                              <span className="text-gray-500 font-bold">Students:</span>
+                              <span className="font-black text-gray-800">{total}</span>
+                            </div>
+                            <div className="flex justify-between items-center text-xs">
+                              <span className="text-emerald-500 font-bold">Placed:</span>
+                              <span className="font-black text-emerald-800">{count}</span>
+                            </div>
+                            <div className="mt-2 pt-2 border-t border-emerald-50 flex justify-between items-center">
+                              <span className="text-[10px] font-black text-emerald-400 uppercase tracking-tighter">Rate:</span>
+                              <span className="text-sm font-black text-emerald-600">{percentage}%</span>
+                            </div>
+                          </div>
+                        </div>
+                      );
+                    }
+                    return null;
+                  }}
+                />
+                <Legend iconType="circle" wrapperStyle={{ paddingTop: '20px', fontWeight: 700, fontSize: '12px', textTransform: 'uppercase', letterSpacing: '0.05em' }} />
+                <Bar name="Total Students" dataKey="total" fill="#e2e8f0" radius={[10, 10, 0, 0]} barSize={20} />
+                <Bar name="Placed Students" dataKey="placed" fill="#10b981" radius={[10, 10, 0, 0]} barSize={20} />
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+        </div>
       </div>
     </div>
   );

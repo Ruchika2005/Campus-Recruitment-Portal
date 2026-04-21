@@ -3,7 +3,7 @@ const { broadcastToStudents } = require("../utils/emailService");
 
 // DASHBOARD STATS
 exports.getTNPStats = (req, res) => {
-  const query = `
+  const mainStatsQuery = `
     SELECT
       (SELECT COUNT(*) FROM students) AS total_students,
       (SELECT COUNT(*) FROM students WHERE year = '2026') AS total_2026,
@@ -22,9 +22,36 @@ exports.getTNPStats = (req, res) => {
       ) AS internship_rate
   `;
 
-  db.query(query, (err, result) => {
+  const branch2026Query = `
+    SELECT branch, COUNT(*) as total, SUM(CASE WHEN is_placed = 1 THEN 1 ELSE 0 END) as placed
+    FROM students
+    WHERE year = '2026'
+    GROUP BY branch;
+  `;
+
+  const branch2027Query = `
+    SELECT branch, COUNT(*) as total, SUM(CASE WHEN is_intern = 1 THEN 1 ELSE 0 END) as interned
+    FROM students
+    WHERE year = '2027'
+    GROUP BY branch;
+  `;
+
+  db.query(mainStatsQuery, (err, stats) => {
     if (err) return res.status(500).json(err);
-    res.json(result[0]);
+    
+    db.query(branch2026Query, (err2, stats2026) => {
+      if (err2) return res.status(500).json(err2);
+      
+      db.query(branch2027Query, (err3, stats2027) => {
+        if (err3) return res.status(500).json(err3);
+        
+        res.json({
+          ...stats[0],
+          batch_2026_stats: stats2026,
+          batch_2027_stats: stats2027
+        });
+      });
+    });
   });
 };
 

@@ -106,7 +106,7 @@ export default function OpportunitiesPage() {
         {title}
       </h3>
       
-      <div className="grid grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
         {items.length > 0 ? (
           items.map((job) => {
             const hasApplied = appliedJobs.has(job.opportunity_id);
@@ -116,93 +116,107 @@ export default function OpportunitiesPage() {
             return (
               <div
                 key={job.opportunity_id}
-                className="bg-white rounded-xl p-6 shadow-sm border border-gray-100 hover:shadow-md transition"
+                className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col group"
               >
-                <div className="flex justify-between mb-3">
-                  <div>
-                    <h3 className="font-semibold text-lg text-gray-800">{job.title}</h3>
-                    <p className="text-gray-500 font-medium">{job.company_name}</p>
+                <div className="flex justify-between items-start mb-4">
+                  <div className="flex-1 pr-2">
+                    <h3 className="font-bold text-gray-900 leading-tight group-hover:text-indigo-600 transition-colors">
+                      {job.title}
+                    </h3>
+                    <p className="text-gray-500 font-semibold text-xs mt-1 flex items-center gap-1">
+                      <Briefcase size={12} className="text-gray-400" />
+                      {job.company_name}
+                    </p>
                   </div>
-
-                  <span className={`px-3 py-1 text-sm ${bgColor} ${textColor} rounded-full h-max font-medium capitalize`}>
+                  <span className={`px-2.5 py-1 text-[10px] ${bgColor} ${textColor} rounded-lg h-max font-black uppercase tracking-wider shadow-sm`}>
                     {job.type}
                   </span>
                 </div>
 
-                <p className="text-sm text-gray-600 mb-4 break-words line-clamp-2">
+                <p className="text-xs text-gray-500 line-clamp-2 mb-4 leading-relaxed">
                   {job.description}
                 </p>
 
-                {/* Eligibility Criteria */}
-                <div className="mb-4 p-3 bg-gray-50 rounded-lg border border-gray-100">
-                  <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-2">Eligibility</p>
+                {/* Eligibility - Structured Rows */}
+                <div className="mb-4 p-4 bg-gray-50 rounded-xl border border-gray-100 flex-grow group-hover:bg-white transition-colors space-y-3">
+                  <p className="text-[10px] font-black text-gray-400 uppercase tracking-[0.15em] mb-1">Eligibility</p>
+                  
                   {!job.branches && !job.years && !job.min_cgpa ? (
-                    <p className="text-xs text-green-600 font-medium">✓ Open to all students</p>
+                    <div className="flex items-center gap-2 text-green-600 font-bold text-xs bg-green-50 px-2 py-1 rounded-md w-fit">
+                      <Users size={14} />
+                      Open to All
+                    </div>
                   ) : (
-                    <div className="space-y-2">
+                    <div className="space-y-3">
                       {job.branches && (
                         <div className="flex items-start gap-2">
-                          <Users size={13} className="text-gray-400 mt-0.5 shrink-0" />
-                          <div className="flex flex-wrap gap-1">
+                          <Users size={14} className="text-gray-400 mt-0.5 shrink-0" />
+                          <div className="flex flex-wrap gap-1.5">
                             {job.branches.split(',').map(b => b.trim()).map((b, i) => (
-                              <span key={i} className="text-xs bg-indigo-50 text-indigo-700 px-2 py-0.5 rounded-full font-medium uppercase">{b}</span>
+                              <span key={i} className="text-[10px] bg-white text-indigo-600 px-2 py-0.5 rounded shadow-sm border border-indigo-50 font-bold uppercase">{b}</span>
                             ))}
                           </div>
                         </div>
                       )}
+                      
                       {job.years && (
-                        <div className="flex items-start gap-2">
-                          <GraduationCap size={13} className="text-gray-400 mt-0.5 shrink-0" />
-                          <div className="flex flex-wrap gap-1">
+                        <div className="flex items-center gap-2">
+                          <GraduationCap size={14} className="text-blue-400 shrink-0" />
+                          <div className="flex flex-wrap gap-1.5 focus:outline-none">
                             {job.years.split(',').map(y => y.trim()).map((y, i) => (
-                              <span key={i} className="text-xs bg-blue-50 text-blue-700 px-2 py-0.5 rounded-full font-medium">Year {y}</span>
+                              <span key={i} className="text-[10px] bg-blue-50 text-blue-600 px-2 py-0.5 rounded font-bold">Batch {y}</span>
                             ))}
                           </div>
                         </div>
                       )}
+
                       {job.min_cgpa && parseFloat(job.min_cgpa) > 0 && (
                         <div className="flex items-center gap-2">
-                          <Star size={13} className="text-gray-400 shrink-0" />
-                          <span className="text-xs text-gray-600">Min. CGPA: <strong className="text-gray-800">{parseFloat(job.min_cgpa).toFixed(1)}</strong></span>
+                          <Star size={14} className="text-amber-400 shrink-0" fill="currentColor" />
+                          <span className="text-[10px] text-gray-600 font-bold bg-amber-50 px-2 py-0.5 rounded border border-amber-100 uppercase tracking-tighter">
+                            Min. CGPA: <span className="text-amber-700">{parseFloat(job.min_cgpa).toFixed(1)}</span>
+                          </span>
                         </div>
                       )}
                     </div>
                   )}
                 </div>
 
-                <div className="space-y-2 text-sm text-gray-600 mb-5">
-                  <div className="flex gap-2 items-center">
-                    <MapPin size={15} className="text-gray-400" />
-                    {job.location || "India"}
+                <div className="space-y-2.5 mb-6">
+                  <div className="flex items-center gap-2.5 text-xs text-gray-500 font-medium bg-gray-50 p-2 rounded-lg">
+                    <MapPin size={16} className="text-indigo-400" />
+                    {job.location || "Remote / India"}
                   </div>
-                  <div className="flex gap-2 items-center">
-                    <Briefcase size={15} className="text-gray-400" />
-                    <span className="capitalize">{job.type}</span>
-                  </div>
-                  <div className={`flex gap-2 items-center font-medium ${deadlinePassed ? 'text-red-500' : 'text-indigo-600'}`}>
-                    <Calendar size={15} />
-                    Deadline: {formatDate(job.deadline)}
-                    {deadlinePassed && <span className="text-xs font-semibold bg-red-100 text-red-600 px-2 py-0.5 rounded-full ml-1">Closed</span>}
+                  <div className={`flex items-center gap-2.5 text-xs font-bold p-2 rounded-lg ${deadlinePassed ? 'bg-red-50 text-red-600' : 'bg-indigo-50 text-indigo-700'}`}>
+                    <Calendar size={16} />
+                    <span className="flex-grow">Deadline: {formatDate(job.deadline)}</span>
+                    {deadlinePassed && <span className="bg-red-600 text-white text-[9px] px-1.5 py-0.5 rounded font-black uppercase">Expired</span>}
                   </div>
                 </div>
 
-                {hasApplied ? (
-                  <button disabled className="w-full bg-green-500 text-white py-2.5 rounded-lg font-medium cursor-not-allowed">
-                    Applied ✓
-                  </button>
-                ) : deadlinePassed ? (
-                  <button disabled className="w-full bg-red-100 text-red-500 py-2.5 rounded-lg font-medium cursor-not-allowed">
-                    Deadline Passed
-                  </button>
-                ) : eligible ? (
-                  <button onClick={() => handleApply(job)} className="w-full bg-indigo-600 text-white py-2.5 rounded-lg hover:bg-indigo-700 transition font-medium">
-                    Apply Now
-                  </button>
-                ) : (
-                  <button disabled className="w-full bg-gray-300 text-gray-500 py-2.5 rounded-lg font-medium cursor-not-allowed">
-                    You are not eligible
-                  </button>
-                )}
+                <div className="mt-auto">
+                  {hasApplied ? (
+                    <div className="w-full bg-green-50 text-green-600 py-3 rounded-xl text-xs font-black uppercase tracking-widest text-center border-2 border-green-200 flex items-center justify-center gap-2">
+                      <Users size={16} />
+                      Applied Successfully
+                    </div>
+                  ) : deadlinePassed ? (
+                    <div className="w-full bg-gray-100 text-gray-400 py-3 rounded-xl text-xs font-black uppercase tracking-widest text-center border border-gray-200">
+                      Opportunity Closed
+                    </div>
+                  ) : eligible ? (
+                    <button 
+                      onClick={() => handleApply(job)} 
+                      className="w-full bg-gradient-to-r from-indigo-600 to-blue-600 text-white py-3 rounded-xl hover:from-indigo-700 hover:to-blue-700 transition-all duration-300 text-xs font-black uppercase tracking-widest shadow-lg shadow-indigo-100 active:scale-95"
+                    >
+                      Apply Now
+                    </button>
+                  ) : (
+                    <div className="w-full bg-red-50 text-red-500 py-3 rounded-xl text-xs font-black uppercase tracking-widest text-center border border-red-100">
+                      Not Eligible
+                    </div>
+                  )}
+                </div>
               </div>
             )
           })
