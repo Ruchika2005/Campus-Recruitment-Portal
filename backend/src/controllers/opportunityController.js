@@ -151,7 +151,7 @@ exports.getStudentApplications = (req, res) => {
 
 exports.getAllApplications = (req, res) => {
   const query = `
-    SELECT a.*, u.name, s.branch, s.cgpa, o.title, o.company_name, o.type, d.file_url as resume
+    SELECT a.*, u.name, s.branch, s.cgpa, o.title, o.company_name, o.type, o.deadline, d.file_url as resume
     FROM applications a
     JOIN students s ON a.roll_no = s.roll_no
     JOIN users u ON s.user_id = u.user_id

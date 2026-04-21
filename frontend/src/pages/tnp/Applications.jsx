@@ -73,6 +73,7 @@ export default function ManageApplications() {
         title: app.title,
         company_name: app.company_name,
         type: app.type,
+        deadline: app.deadline,
         applicants: []
       };
     }
@@ -81,6 +82,15 @@ export default function ManageApplications() {
   }, {});
 
   const groupedAppsList = Object.values(groupedApps).sort((a, b) => b.opportunity_id - a.opportunity_id);
+
+  const isPastDeadline = (deadline) => {
+    if (!deadline) return true;
+    const now = new Date();
+    now.setHours(0, 0, 0, 0);
+    const deadlineDate = new Date(deadline);
+    deadlineDate.setHours(0, 0, 0, 0);
+    return now > deadlineDate;
+  };
 
   return (
     <div className="bg-white p-8 rounded-2xl shadow-sm border border-gray-100 min-h-screen">
@@ -103,85 +113,102 @@ export default function ManageApplications() {
       </div>
 
       <div className="space-y-12">
-        {groupedAppsList.map((group) => (
-          <div key={group.opportunity_id} className="bg-gray-50 border border-gray-200 rounded-xl overflow-hidden">
-            <div className="bg-white p-5 border-b border-gray-200 flex flex-wrap justify-between items-center gap-4">
-              <div>
-                <h3 className="text-xl font-bold text-gray-800">{group.title} at {group.company_name}</h3>
-                <p className="text-sm text-gray-500 font-medium mt-1">Opportunity ID: #{group.opportunity_id}</p>
-              </div>
-              <div className="flex items-center gap-3">
-                <div className="flex items-center gap-2 px-3 py-1 bg-indigo-50 text-indigo-700 rounded-full font-medium capitalize text-sm">
-                  <Briefcase size={16} />
-                  {group.type || 'Job'}
+        {groupedAppsList.map((group) => {
+          const hasPassed = isPastDeadline(group.deadline);
+          
+          return (
+            <div key={group.opportunity_id} className="bg-gray-50 border border-gray-200 rounded-xl overflow-hidden">
+              <div className="bg-white p-5 border-b border-gray-200 flex flex-wrap justify-between items-center gap-4">
+                <div>
+                  <h3 className="text-xl font-bold text-gray-800">{group.title} at {group.company_name}</h3>
+                  <div className="flex items-center gap-4 mt-1">
+                    <p className="text-sm text-gray-500 font-medium">Opportunity ID: #{group.opportunity_id}</p>
+                    {group.deadline && (
+                      <p className={`text-xs font-bold px-2 py-0.5 rounded ${hasPassed ? 'bg-red-50 text-red-600' : 'bg-green-50 text-green-600'}`}>
+                        Deadline: {new Date(group.deadline).toLocaleDateString()} {hasPassed ? '(Passed)' : '(Active)'}
+                      </p>
+                    )}
+                  </div>
                 </div>
-                <button onClick={() => exportCSV(group)} className="flex items-center gap-1.5 px-3 py-1.5 bg-green-600 text-white rounded-lg hover:bg-green-700 font-medium transition shadow-sm text-sm">
-                  <Download size={14} />
-                  Export
-                </button>
+                <div className="flex items-center gap-3">
+                  <div className="flex items-center gap-2 px-3 py-1 bg-indigo-50 text-indigo-700 rounded-full font-medium capitalize text-sm">
+                    <Briefcase size={16} />
+                    {group.type || 'Job'}
+                  </div>
+                  <button onClick={() => exportCSV(group)} className="flex items-center gap-1.5 px-3 py-1.5 bg-green-600 text-white rounded-lg hover:bg-green-700 font-medium transition shadow-sm text-sm">
+                    <Download size={14} />
+                    Export
+                  </button>
+                </div>
+              </div>
+
+              <div className="overflow-x-auto">
+                <table className="w-full text-left border-collapse">
+                  <thead>
+                    <tr className="text-gray-500 text-xs uppercase tracking-wider border-b border-gray-200 bg-gray-50">
+                      <th className="py-3 px-6 font-semibold">Student Details</th>
+                      <th className="py-3 px-6 font-semibold">Branch & CGPA</th>
+                      <th className="py-3 px-6 font-semibold">Current Status</th>
+                      <th className="py-3 px-6 font-semibold text-right">Actions</th>
+                    </tr>
+                  </thead>
+
+                  <tbody className="text-sm bg-white">
+                    {group.applicants.map((app) => (
+                      <tr key={app.application_id} className="border-b border-gray-100 hover:bg-gray-50 transition">
+                        <td className="py-4 px-6">
+                          <p className="font-semibold text-gray-800">{app.name}</p>
+                          <p className="text-gray-500 text-xs mt-0.5">{app.roll_no}</p>
+                        </td>
+                        <td className="py-4 px-6 text-gray-600">
+                          <span className="font-medium text-gray-700">{app.branch}</span>
+                          <br/>
+                          <span className="text-xs text-gray-400 font-medium">CGPA: {app.cgpa}</span>
+                          {app.resume && (
+                            <div className="mt-2">
+                              <a 
+                                href={`http://${window.location.hostname}:5000${app.resume}`} 
+                                target="_blank" 
+                                rel="noopener noreferrer"
+                                className="inline-flex items-center gap-1 px-2 py-1 bg-indigo-50 text-indigo-600 hover:bg-indigo-100 rounded text-[10px] font-bold transition border border-indigo-100 shadow-sm"
+                              >
+                                <FileText size={12} />
+                                View Resume
+                              </a>
+                            </div>
+                          )}
+                        </td>
+                        <td className="py-4 px-6">
+                          <span className={`px-3 py-1 rounded-full text-xs font-semibold capitalize
+                            ${app.status === 'selected' ? 'bg-green-100 text-green-700' : 
+                              app.status === 'shortlisted' ? 'bg-yellow-100 text-yellow-700' : 
+                              app.status === 'rejected' ? 'bg-red-100 text-red-700' : 'bg-blue-100 text-blue-700'}`}>
+                            {app.status}
+                          </span>
+                        </td>
+                        <td className="py-4 px-6 text-right">
+                          {hasPassed ? (
+                            <div className="flex justify-end gap-2">
+                              <button onClick={() => handleUpdateStatus(app.application_id, "shortlisted")} className="text-xs px-3 py-1.5 bg-yellow-100 text-yellow-700 rounded-lg hover:bg-yellow-200 font-semibold transition" title="Shortlist">Shortlist</button>
+                              <button onClick={() => handleUpdateStatus(app.application_id, "selected")} className="text-xs px-3 py-1.5 bg-green-100 text-green-700 rounded-lg hover:bg-green-200 font-semibold transition" title="Select">Select</button>
+                              <button onClick={() => handleUpdateStatus(app.application_id, "rejected")} className="text-xs px-3 py-1.5 bg-red-100 text-red-700 rounded-lg hover:bg-red-200 font-semibold transition" title="Reject">Reject</button>
+                            </div>
+                          ) : (
+                            <span className="text-xs font-bold text-gray-400 italic">Phase starts after deadline</span>
+                          )}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+              
+              <div className="bg-gray-50 px-6 py-3 border-t border-gray-200 mt-auto flex justify-between items-center text-xs text-gray-500 font-medium">
+                <span>{group.applicants.length} Applicant{group.applicants.length !== 1 ? 's' : ''}</span>
               </div>
             </div>
-
-            <div className="overflow-x-auto">
-              <table className="w-full text-left border-collapse">
-                <thead>
-                  <tr className="text-gray-500 text-xs uppercase tracking-wider border-b border-gray-200 bg-gray-50">
-                    <th className="py-3 px-6 font-semibold">Student Details</th>
-                    <th className="py-3 px-6 font-semibold">Branch & CGPA</th>
-                    <th className="py-3 px-6 font-semibold">Current Status</th>
-                    <th className="py-3 px-6 font-semibold text-right">Actions</th>
-                  </tr>
-                </thead>
-
-                <tbody className="text-sm bg-white">
-                  {group.applicants.map((app) => (
-                    <tr key={app.application_id} className="border-b border-gray-100 hover:bg-gray-50 transition">
-                      <td className="py-4 px-6">
-                        <p className="font-semibold text-gray-800">{app.name}</p>
-                        <p className="text-gray-500 text-xs mt-0.5">{app.roll_no}</p>
-                      </td>
-                      <td className="py-4 px-6 text-gray-600">
-                        <span className="font-medium text-gray-700">{app.branch}</span>
-                        <br/>
-                        <span className="text-xs text-gray-400 font-medium">CGPA: {app.cgpa}</span>
-                        {app.resume && (
-                          <div className="mt-2">
-                            <a 
-                              href={`http://${window.location.hostname}:5000${app.resume}`} 
-                              target="_blank" 
-                              rel="noopener noreferrer"
-                              className="inline-flex items-center gap-1 px-2 py-1 bg-indigo-50 text-indigo-600 hover:bg-indigo-100 rounded text-[10px] font-bold transition border border-indigo-100 shadow-sm"
-                            >
-                              <FileText size={12} />
-                              View Resume
-                            </a>
-                          </div>
-                        )}
-                      </td>
-                      <td className="py-4 px-6">
-                        <span className={`px-3 py-1 rounded-full text-xs font-semibold capitalize
-                          ${app.status === 'selected' ? 'bg-green-100 text-green-700' : 
-                            app.status === 'shortlisted' ? 'bg-yellow-100 text-yellow-700' : 
-                            app.status === 'rejected' ? 'bg-red-100 text-red-700' : 'bg-blue-100 text-blue-700'}`}>
-                          {app.status}
-                        </span>
-                      </td>
-                      <td className="py-4 px-6 flex justify-end gap-2">
-                        <button onClick={() => handleUpdateStatus(app.application_id, "shortlisted")} className="text-xs px-3 py-1.5 bg-yellow-100 text-yellow-700 rounded-lg hover:bg-yellow-200 font-semibold transition" title="Shortlist">Shortlist</button>
-                        <button onClick={() => handleUpdateStatus(app.application_id, "selected")} className="text-xs px-3 py-1.5 bg-green-100 text-green-700 rounded-lg hover:bg-green-200 font-semibold transition" title="Select">Select</button>
-                        <button onClick={() => handleUpdateStatus(app.application_id, "rejected")} className="text-xs px-3 py-1.5 bg-red-100 text-red-700 rounded-lg hover:bg-red-200 font-semibold transition" title="Reject">Reject</button>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-            
-            <div className="bg-gray-50 px-6 py-3 border-t border-gray-200 mt-auto flex justify-between items-center text-xs text-gray-500 font-medium">
-              <span>{group.applicants.length} Applicant{group.applicants.length !== 1 ? 's' : ''}</span>
-            </div>
-          </div>
-        ))}
+          );
+        })}
         
         {groupedAppsList.length === 0 && (
            <div className="text-center py-12 bg-gray-50 rounded-xl border border-gray-200 border-dashed">
