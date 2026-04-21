@@ -48,7 +48,7 @@ exports.createOpportunity = (req, res) => {
           return db.rollback(() => res.status(500).json({ error: "Failed to add eligibility", details: err }));
         }
 
-        db.commit((err) => {
+        db.commit(async (err) => {
           if (err) {
             return db.rollback(() => res.status(500).json({ error: "Transaction commit failed", details: err }));
           }
@@ -56,14 +56,41 @@ exports.createOpportunity = (req, res) => {
           // Notify all students about new opportunity
           const emailSubject = `New Job Opportunity: ${title} at ${company_name}`;
           const emailHtml = `
-            <h3>New Recruitment Drive!</h3>
-            <p><strong>Company:</strong> ${company_name}</p>
-            <p><strong>Role:</strong> ${title}</p>
-            <p><strong>Deadline:</strong> ${deadline}</p>
-            <hr/>
-            <p>Check the Campus Recruitment Portal for eligibility and to apply.</p>
+            <div style="font-family: Arial, sans-serif; max-width: 600px; margin: auto; border: 1px solid #e2e8f0; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 10px rgba(0,0,0,0.05);">
+              <div style="background: linear-gradient(135deg, #059669 0%, #10b981 100%); color: white; padding: 30px; text-align: center;">
+                <h1 style="margin: 0; font-size: 24px; letter-spacing: 0.5px;">New Recruitment Drive!</h1>
+              </div>
+              <div style="padding: 25px; color: #1f2937; background-color: white;">
+                <div style="margin-bottom: 20px;">
+                  <p style="font-size: 16px; margin: 0 0 10px 0;">A new opportunity has been posted:</p>
+                  <div style="background-color: #f0fdf4; border-left: 4px solid #10b981; padding: 15px; border-radius: 4px;">
+                    <p style="margin: 0; font-weight: bold; font-size: 18px; color: #065f46;">${company_name}</p>
+                    <p style="margin: 5px 0 0 0; color: #047857; font-weight: 600;">${title}</p>
+                  </div>
+                </div>
+                
+                <div style="display: grid; gap: 10px; margin-bottom: 25px;">
+                  <p style="margin: 0; font-size: 14px;"><strong style="color: #4b5563;">Type:</strong> <span style="text-transform: capitalize;">${type}</span></p>
+                  <p style="margin: 0; font-size: 14px;"><strong style="color: #4b5563;">Deadline:</strong> ${deadline}</p>
+                  <p style="margin: 0; font-size: 14px;"><strong style="color: #4b5563;">Location:</strong> ${location || 'N/A'}</p>
+                </div>
+
+                <div style="text-align: center;">
+                  <a href="${process.env.FRONTEND_URL || 'http://localhost:5173'}" style="background-color: #10b981; color: white; padding: 14px 28px; text-decoration: none; border-radius: 8px; font-weight: bold; display: inline-block; box-shadow: 0 2px 4px rgba(16, 185, 129, 0.2);">View & Apply Now</a>
+                </div>
+              </div>
+              <div style="background-color: #f9fafb; padding: 20px; text-align: center; font-size: 12px; color: #6b7280; border-top: 1px solid #f3f4f6;">
+                Don't miss the deadline! Make sure your profile is updated before applying.
+              </div>
+            </div>
           `;
-          broadcastToStudents(emailSubject, emailHtml);
+          
+          try {
+            console.log(`[Opportunities] Triggering email broadcast...`);
+            await broadcastToStudents(emailSubject, emailHtml);
+          } catch (emailErr) {
+            console.error("❌ Opportunity created but email broadcast failed:", emailErr.message);
+          }
 
           res.status(201).json({ message: "Opportunity and eligibility created successfully!", opportunity_id: oppId });
         });

@@ -74,20 +74,24 @@ const sendEmail = async (to, subject, html) => {
  * Send an email to all registered students
  */
 const broadcastToStudents = async (subject, html) => {
+  console.log(`\n--- 📧 BROADCAST NOTIFICATION INITIATED ---`);
+  
   return new Promise((resolve, reject) => {
     const query = "SELECT email FROM users WHERE role = 'student'";
     db.query(query, async (err, results) => {
       if (err) {
-        console.error("Error fetching student emails:", err);
+        console.error("❌ Error fetching student emails:", err);
+        return reject(err);
+      }
+
+      if (results.length === 0) {
+        console.log("ℹ️ No students found to broadcast to.");
         return resolve(null);
       }
 
-      if (results.length === 0) return resolve(null);
-
-      const emails = results.map(r => r.email);
+      const emails = results.map(r => r.email).filter(email => email && email.includes('@'));
       
-      console.log(`\n--- 📧 BROADCAST NOTIFICATION TRIGGERED ---`);
-      console.log(`To: (BCC All Students)`);
+      console.log(`To: (BCC ${emails.length} Students)`);
       console.log(`Subject: ${subject}`);
       console.log(`-------------------------------------------\n`);
 
@@ -104,7 +108,7 @@ const broadcastToStudents = async (subject, html) => {
         return resolve(info);
       } catch (error) {
         console.error("❌ Broadcast failed:", error.message);
-        return resolve(null);
+        return reject(error);
       }
     });
   });

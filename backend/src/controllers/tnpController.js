@@ -97,24 +97,43 @@ exports.getTopCompanies = (req, res) => {
 };
 
 // CREATE ANNOUNCEMENT
-exports.createAnnouncement = (req, res) => {
+exports.createAnnouncement = async (req, res) => {
   const { title, message } = req.body;
   if (!title || !message) return res.status(400).json({ error: "Title and message are required" });
 
   const query = "INSERT INTO announcements (title, message) VALUES (?, ?)";
-  db.query(query, [title, message], (err, result) => {
+  db.query(query, [title, message], async (err, result) => {
     if (err) return res.status(500).json({ error: err.message });
     
     // Notify all students
     const emailSubject = `New Announcement: ${title}`;
     const emailHtml = `
-      <h3>New Announcement from T&P Cell</h3>
-      <p><strong>${title}</strong></p>
-      <p>${message}</p>
-      <hr/>
-      <p>Please log in to the portal for more details.</p>
+      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: auto; border: 1px solid #e0e0e0; border-radius: 10px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+        <div style="background-color: #4f46e5; color: white; padding: 20px; text-align: center;">
+          <h1 style="margin: 0; font-size: 24px;">Campus Update</h1>
+        </div>
+        <div style="padding: 20px; color: #333; line-height: 1.6;">
+          <h2 style="color: #4f46e5;">${title}</h2>
+          <p>${message}</p>
+          <hr style="border: 0; border-top: 1px solid #eee; margin: 20px 0;"/>
+          <p style="font-size: 14px; color: #666;">Please log in to the <strong>Campus Recruitment Portal</strong> to stay updated with latest information.</p>
+          <div style="text-align: center; margin-top: 30px;">
+            <a href="${process.env.FRONTEND_URL || 'http://localhost:5173'}" style="background-color: #4f46e5; color: white; padding: 12px 24px; text-decoration: none; border-radius: 5px; font-weight: bold; display: inline-block;">Go to Portal</a>
+          </div>
+        </div>
+        <div style="background-color: #f9fafb; padding: 15px; text-align: center; font-size: 12px; color: #9ca3af; border-top: 1px solid #e0e0e0;">
+          This is an automated notification from the T&P Cell.
+        </div>
+      </div>
     `;
-    broadcastToStudents(emailSubject, emailHtml);
+
+    try {
+      console.log(`[Announcements] Triggering email broadcast...`);
+      await broadcastToStudents(emailSubject, emailHtml);
+    } catch (emailErr) {
+      console.error("❌ Announcement created but email broadcast failed:", emailErr.message);
+      // We still return success since the announcement was saved to DB
+    }
 
     res.status(201).json({ message: "Announcement created", id: result.insertId });
   });
