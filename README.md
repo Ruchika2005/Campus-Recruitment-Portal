@@ -300,11 +300,3 @@ DATABASE_URL=mysql://username:password@host:port/database_name
 
 ---
 
-## Notes
-
-- Passwords are currently stored as **plain text**. For production use, implement hashing with `bcrypt`.
-- JWT-based authentication is stubbed but not yet enforced on all routes. The `authMiddleware.js` file can be extended for token validation.
-- File uploads are stored locally under `backend/uploads/resumes/`. For production, consider cloud storage (e.g., AWS S3).
-- The `createTables()` function in `server.js` is commented out by default; uncomment it once on a fresh database to initialize all tables.
-
----
