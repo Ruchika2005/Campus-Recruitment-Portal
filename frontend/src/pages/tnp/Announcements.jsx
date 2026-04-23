@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import axios from "axios";
+import { getStudentAnnouncements, addTNPAnnouncement, deleteTNPAnnouncement } from "../../services/api";
 import { Megaphone, Trash2, Edit3, MessageSquare } from "lucide-react";
 
 export default function AdminAnnouncements() {
@@ -13,7 +13,7 @@ export default function AdminAnnouncements() {
 
   const fetchData = async () => {
     try {
-      const res = await axios.get("http://localhost:5000/api/student/announcements");
+      const res = await getStudentAnnouncements();
       setData(res.data);
     } catch (err) {
       console.error(err);
@@ -23,7 +23,7 @@ export default function AdminAnnouncements() {
   const addAnnouncement = async () => {
     if (!title || !message) return alert("Please fill both title and message");
     try {
-      await axios.post("http://localhost:5000/api/tnp/announcements", { title, message });
+      await addTNPAnnouncement({ title, message });
       setTitle("");
       setMessage("");
       fetchData();
@@ -34,7 +34,7 @@ export default function AdminAnnouncements() {
 
   const deleteAnnouncement = async (id) => {
     try {
-      await axios.delete(`http://localhost:5000/api/tnp/announcements/${id}`);
+      await deleteTNPAnnouncement(id);
       fetchData();
     } catch (err) {
       console.error(err);

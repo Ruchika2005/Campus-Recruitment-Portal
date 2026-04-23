@@ -1,6 +1,7 @@
 import { useNavigate, Link } from "react-router-dom";
 import collegeLogo from "../../assets/images/college-logo.png";
 import collegePic1 from "../../assets/images/pic1.jpg";
+import { login } from "../../services/api";
 
 function Login() {
   const navigate = useNavigate();
@@ -12,23 +13,14 @@ function Login() {
     const password = e.target.password.value;
 
     try {
-      const res = await fetch("http://localhost:5000/api/auth/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }),
-      });
-
-      const data = await res.json();
+      const res = await login({ email, password });
+      const data = res.data;
 
       console.log("LOGIN RESPONSE:", data);
 
-      if (!res.ok) {
-        alert(data.message || "Login failed");
-        return;
-      }
-
       // ✅ ALWAYS extract user safely
       const user = data.user;
+
 
       if (!user) {
         alert("User data not received");
@@ -52,7 +44,7 @@ function Login() {
 
     } catch (err) {
       console.log("FULL ERROR:", err);
-      alert("Server not reachable");
+      alert(err.response?.data?.message || "Server not reachable");
     }
   };
 

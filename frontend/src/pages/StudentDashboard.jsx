@@ -4,7 +4,7 @@ import StatCard from "../components/dashboard/StatCard";
 import OpportunityCard from "../components/dashboard/OpportunityCard";
 import ApplicationTable from "../components/dashboard/ApplicationTable";
 
-import { getStats, getOpportunities, getApplications } from "../services/api";
+import { getStudentStats, getOpportunities, getStudentApplications } from "../services/api";
 
 function StudentDashboard() {
   const [stats, setStats] = useState({});
@@ -19,14 +19,15 @@ function StudentDashboard() {
   }, []);
 
   const fetchData = async () => {
-    const statsRes = await getStats(user_id);
+    const statsRes = await getStudentStats(user_id);
     const jobsRes = await getOpportunities();
-    const appsRes = await getApplications(roll_no);
+    const appsRes = await getStudentApplications(roll_no);
 
     setStats(statsRes.data);
     setJobs(jobsRes.data);
     setApps(appsRes.data);
   };
+
 
   return (
     <div className="flex bg-[#f6f7fb] h-screen">

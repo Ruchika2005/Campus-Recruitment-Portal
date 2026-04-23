@@ -1,6 +1,7 @@
 import { useNavigate, Link } from "react-router-dom";
 import collegeLogo from "../../assets/images/college-logo.png";
 import collegePic1 from "../../assets/images/pic1.jpg";
+import { register } from "../../services/api";
 
 function Register() {
   const navigate = useNavigate();
@@ -12,23 +13,17 @@ function Register() {
     const email = e.target.email.value;
     const password = e.target.password.value;
 
-    const res = await fetch("http://localhost:5000/api/auth/register", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ name, email, password }),
-    });
+    try {
+      const res = await register({ name, email, password });
+      const data = res.data;
 
-    const data = await res.json();
+      // after successful register
+      localStorage.setItem("temp_user_id", data.user_id);
 
-    if (!res.ok) {
-      alert(data.message || "Registration failed");
-      return;
+      navigate("/complete-profile");
+    } catch (err) {
+      alert(err.response?.data?.message || "Registration failed");
     }
-
-    // after successful register
-    localStorage.setItem("temp_user_id", data.user_id);
-
-    navigate("/complete-profile");
   };
 
   return (

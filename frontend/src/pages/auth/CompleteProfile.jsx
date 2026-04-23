@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import axios from "axios";
 import { CheckCircle } from "lucide-react";
+import { completeProfile } from "../../services/api";
 
 export default function CompleteProfile() {
   const location = useLocation();
@@ -66,13 +66,10 @@ export default function CompleteProfile() {
     Object.keys(form).forEach(key => formData.append(key, form[key]));
     if (file) formData.append("resume", file);
 
-    const res = await axios.post(
-      "http://localhost:5000/api/auth/complete-profile",
-      formData,
-      { headers: { "Content-Type": "multipart/form-data" } }
-    );
+    const res = await completeProfile(formData);
 
     const user = res.data.user;
+
 
     localStorage.setItem("user", JSON.stringify(user));
     localStorage.setItem("user_id", user.user_id);
@@ -88,7 +85,7 @@ export default function CompleteProfile() {
     }
 
   } catch (err) {
-    alert("Profile creation failed");
+    alert(err.response?.data?.message || "Profile creation failed");
   }
 };
 

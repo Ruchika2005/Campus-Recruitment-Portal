@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { getStats, getOpportunities } from "../../services/api";
+import { getStudentStats, getOpportunities } from "../../services/api";
 import OpportunityCard from "../../components/dashboard/OpportunityCard";
 
 export default function StudentDashboard() {
@@ -15,7 +15,7 @@ export default function StudentDashboard() {
 
   const fetchStats = async () => {
     try {
-      const res = await getStats(user_id);
+      const res = await getStudentStats(user_id);
       setStats(res.data);
     } catch (err) {
       console.error(err);

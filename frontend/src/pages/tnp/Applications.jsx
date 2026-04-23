@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { getAllAdminApplications, updateApplicationStatus } from "../../services/api";
+import { getAllAdminApplications, updateApplicationStatus, BASE_URL } from "../../services/api";
 import { Download, Briefcase, FileText } from "lucide-react";
 
 export default function ManageApplications() {
@@ -40,7 +40,7 @@ export default function ManageApplications() {
       a.company_name, 
       a.title, 
       a.status,
-      a.resume ? `http://${window.location.hostname}:5000${a.resume}` : "No Resume"
+      a.resume ? `${BASE_URL}${a.resume}` : "No Resume"
     ]);
     
     const csvContent = [
@@ -167,7 +167,7 @@ export default function ManageApplications() {
                           {app.resume && (
                             <div className="mt-2">
                               <a 
-                                href={`http://${window.location.hostname}:5000${app.resume}`} 
+                                href={`${BASE_URL}${app.resume}`} 
                                 target="_blank" 
                                 rel="noopener noreferrer"
                                 className="inline-flex items-center gap-1 px-2 py-1 bg-indigo-50 text-indigo-600 hover:bg-indigo-100 rounded text-[10px] font-bold transition border border-indigo-100 shadow-sm"

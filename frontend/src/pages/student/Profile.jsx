@@ -1,6 +1,12 @@
 import { useEffect, useState, useRef } from "react";
-import axios from "axios";
 import { FileText, Save, Edit2, Upload, Trash2, RefreshCw, X } from "lucide-react";
+import { 
+  getStudentProfile, 
+  updateStudentProfile, 
+  updateStudentResume, 
+  deleteStudentResume,
+  BASE_URL 
+} from "../../services/api";
 
 export default function Profile() {
   const [data, setData] = useState(null);
@@ -16,14 +22,18 @@ export default function Profile() {
   }, []);
 
   const fetchProfile = async () => {
-    const res = await axios.get(`http://localhost:5000/api/student/profile/${user_id}`);
-    setData(res.data);
-    setEditForm({ 
-      cgpa: res.data.cgpa, 
-      year: res.data.year,
-      skills: res.data.skills || "",
-      projects: res.data.projects || ""
-    });
+    try {
+      const res = await getStudentProfile(user_id);
+      setData(res.data);
+      setEditForm({ 
+        cgpa: res.data.cgpa, 
+        year: res.data.year,
+        skills: res.data.skills || "",
+        projects: res.data.projects || ""
+      });
+    } catch (err) {
+      console.error("Failed to fetch profile", err);
+    }
   };
 
   const handleEditChange = (e) => {
@@ -32,7 +42,7 @@ export default function Profile() {
 
   const saveProfile = async () => {
     try {
-      await axios.put(`http://localhost:5000/api/student/profile/${user_id}`, editForm);
+      await updateStudentProfile(user_id, editForm);
       setData({ ...data, ...editForm });
       setIsEditing(false);
     } catch (err) {
@@ -50,9 +60,7 @@ export default function Profile() {
     const formData = new FormData();
     formData.append("resume", selectedFile);
     try {
-      const res = await axios.put(`http://localhost:5000/api/student/profile/${user_id}/resume`, formData, {
-        headers: { "Content-Type": "multipart/form-data" }
-      });
+      const res = await updateStudentResume(user_id, formData);
       setData({ ...data, resume: res.data.resume });
       alert("Resume updated successfully!");
     } catch (err) {
@@ -72,12 +80,13 @@ export default function Profile() {
 
   const deleteResume = async () => {
     try {
-      await axios.delete(`http://localhost:5000/api/student/profile/${user_id}/resume`);
+      await deleteStudentResume(user_id);
       setData({ ...data, resume: null });
     } catch (err) {
       alert("Failed to delete resume");
     }
   };
+
 
   if (!data) {
     return (
@@ -223,10 +232,10 @@ export default function Profile() {
             </div>
             {data.resume.toLowerCase().endsWith('.pdf') ? (
               <div className="w-full h-96 border rounded-xl overflow-hidden shadow-sm bg-gray-100">
-                <iframe src={`http://localhost:5000${data.resume}`} title="Resume Preview" width="100%" height="100%" />
+                <iframe src={`${BASE_URL}${data.resume}`} title="Resume Preview" width="100%" height="100%" />
               </div>
             ) : (
-               <a href={`http://localhost:5000${data.resume}`} target="_blank" rel="noopener noreferrer" className="text-indigo-600 font-medium hover:underline inline-block">
+               <a href={`${BASE_URL}${data.resume}`} target="_blank" rel="noopener noreferrer" className="text-indigo-600 font-medium hover:underline inline-block">
                  View / Download Resume
                </a>
             )}

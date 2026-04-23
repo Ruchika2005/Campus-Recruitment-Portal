@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import axios from "axios";
+import { getStudentAnnouncements } from "../../services/api";
 import { Megaphone, Bell } from "lucide-react";
 
 export default function Announcements() {
@@ -11,7 +11,7 @@ export default function Announcements() {
 
   const fetchAnnouncements = async () => {
     try {
-      const res = await axios.get("http://localhost:5000/api/student/announcements");
+      const res = await getStudentAnnouncements();
       setData(res.data);
     } catch (err) {
       console.error(err);

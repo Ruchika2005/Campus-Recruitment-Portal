@@ -1,6 +1,6 @@
 import { useState } from "react";
-import axios from "axios";
 import { Lock, Save, AlertCircle, CheckCircle2, ShieldCheck } from "lucide-react";
+import { changePassword } from "../../services/api";
 
 export default function Settings() {
   const [passwords, setPasswords] = useState({
@@ -32,7 +32,7 @@ export default function Settings() {
     setStatus({ type: "", message: "" });
 
     try {
-      await axios.post("http://localhost:5000/api/auth/change-password", {
+      await changePassword({
         user_id: userId,
         currentPassword: passwords.currentPassword,
         newPassword: passwords.newPassword

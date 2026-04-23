@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
-import { getStudentApplications } from "../../services/api";
-import axios from "axios";
+import { getStudentApplications, getStudentProfile } from "../../services/api";
 import { Briefcase, Calendar, MapPin, Building } from "lucide-react";
 
 export default function ApplicationsPage() {
@@ -15,7 +14,7 @@ export default function ApplicationsPage() {
 
   const fetchApplications = async () => {
     try {
-      const profRes = await axios.get(`http://localhost:5000/api/student/profile/${user_id}`);
+      const profRes = await getStudentProfile(user_id);
       const prof = profRes.data;
 
       const res = await getStudentApplications(prof.roll_no);

@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import axios from "axios";
+import { getTNPStudents, getTNPStudentActivity } from "../../services/api";
 import { 
   Users, 
   Search, 
@@ -27,7 +27,7 @@ export default function StudentsList() {
 
   const fetchStudents = async () => {
     try {
-      const res = await axios.get("http://localhost:5000/api/tnp/students");
+      const res = await getTNPStudents();
       setStudents(res.data);
     } catch (err) {
       console.error("Failed to fetch students", err);
@@ -39,7 +39,7 @@ export default function StudentsList() {
   const fetchActivity = async (roll_no) => {
     setActivityLoading(true);
     try {
-      const res = await axios.get(`http://localhost:5000/api/tnp/students/${roll_no}/activity`);
+      const res = await getTNPStudentActivity(roll_no);
       setActivity(res.data);
     } catch (err) {
       console.error("Failed to fetch activity", err);

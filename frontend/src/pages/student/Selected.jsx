@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import axios from "axios";
+import { getStudentSelected } from "../../services/api";
 import { Briefcase } from "lucide-react";
 
 export default function Selected() {
@@ -12,7 +12,7 @@ export default function Selected() {
 
   const fetchSelected = async () => {
     try {
-      const res = await axios.get("http://localhost:5000/api/student/selected");
+      const res = await getStudentSelected();
       setData(res.data);
     } catch (err) {
       console.error(err);

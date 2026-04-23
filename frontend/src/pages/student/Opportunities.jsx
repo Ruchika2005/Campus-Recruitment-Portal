@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
-import { getOpportunities, applyOpportunity, getStudentApplications } from "../../services/api";
+import { getOpportunities, applyOpportunity, getStudentApplications, getStudentProfile } from "../../services/api";
 import { Briefcase, Calendar, MapPin, GraduationCap, Users, Star } from "lucide-react";
-import axios from "axios";
 
 export default function OpportunitiesPage() {
   const [jobs, setJobs] = useState([]);
@@ -24,7 +23,7 @@ export default function OpportunitiesPage() {
 
     try {
       if (user_id) {
-        const profRes = await axios.get(`http://localhost:5000/api/student/profile/${user_id}`);
+        const profRes = await getStudentProfile(user_id);
         const prof = profRes.data;
         if (prof?.roll_no) {
           setProfile(prof);
